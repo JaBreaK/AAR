@@ -11,7 +11,7 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("register.php")
     Call<AuthResponse> register(
-            @Field("name") String name,
+            @Field("full_name") String full_name,
             @Field("email") String email,
             @Field("phone") String phone,
             @Field("password") String password

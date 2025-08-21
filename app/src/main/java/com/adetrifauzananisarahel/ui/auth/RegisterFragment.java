@@ -37,12 +37,12 @@ public class RegisterFragment extends Fragment {
 
     private void handleRegister() {
         // SESUAIKAN DENGAN NAMA DI DATABASE & XML KAMU
-        String name = binding.editTextName.getText().toString().trim(); // Yang lama 'username'
+        String full_name = binding.editTextName.getText().toString().trim(); // Yang lama 'username'
         String email = binding.editTextEmail.getText().toString().trim();
         String phone = binding.editTextPhone.getText().toString().trim();
         String password = binding.editTextPasswordRegister.getText().toString().trim();
 
-        if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty()) {
+        if (full_name.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), "Semua data tidak boleh kosong", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -51,7 +51,7 @@ public class RegisterFragment extends Fragment {
         binding.buttonRegister.setEnabled(false); // Biar gak diklik berkali-kali
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        Call<AuthResponse> call = apiService.register(name, email, phone, password);
+        Call<AuthResponse> call = apiService.register(full_name, email, phone, password);
 
         call.enqueue(new Callback<AuthResponse>() {
             @Override
