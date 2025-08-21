@@ -7,8 +7,8 @@ public class User {
     @SerializedName("id")
     private String id;
 
-    @SerializedName("name")
-    private String name;
+    @SerializedName("full_name")
+    private String full_name;
 
     @SerializedName("email")
     private String email;
@@ -23,7 +23,7 @@ public class User {
     // (Bisa generate otomatis di Android Studio: Alt + Insert -> Getter)
 
     public String getId() { return id; }
-    public String getName() { return name; }
+    public String getName() { return full_name; }
     public String getEmail() { return email; }
     public String getPhone() { return phone; }
     public String getRole() { return role; }
