@@ -121,7 +121,7 @@ public class TransactionDetailFragment extends Fragment {
                 for (CartItem item : transaction.getItems()) {
                     long productId = item.getProductId();
                     // Lakukan query ke DB untuk mendapatkan alamat produk berdasarkan ID
-                    Cursor cursor = dbHelper.getProductById(productId);
+                    Cursor cursor = dbHelper.getProductById(String.valueOf(productId));
                     if (cursor != null && cursor.moveToFirst()) {
                         String address = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.ProductEntry.COLUMN_ADDRESS));
                         uniqueOriginAddresses.add(address);

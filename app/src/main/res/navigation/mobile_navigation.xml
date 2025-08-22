@@ -33,7 +33,6 @@
         android:name="com.adetrifauzananisarahel.ui.transaksi.TransaksiFragment"
         android:label="@string/title_transaksi"
         tools:layout="@layout/fragment_transaksi">
-        <!-- ACTION DARI RIWAYAT TRANSAKSI KE DETAIL -->
         <action
             android:id="@+id/action_transaksi_to_detail"
             app:destination="@id/transactionDetailFragment" />
@@ -81,11 +80,9 @@
             android:name="PRODUCT_ID"
             app:argType="long"
             android:defaultValue="-1L" />
-
         <action
             android:id="@+id/action_addEditProductFragment_to_mapPickerFragment"
             app:destination="@id/mapPickerFragment" />
-
     </fragment>
 
     <!-- Detail Produk -->
@@ -94,9 +91,16 @@
         android:name="com.adetrifauzananisarahel.ui.product.ProductDetailFragment"
         android:label="Detail Produk"
         tools:layout="@layout/fragment_product_detail">
+        <!--
+        ===============================================================
+        PERBAIKAN UTAMA DI SINI:
+        - 'name' diubah menjadi "foodId"
+        - 'argType' diubah menjadi "string"
+        ===============================================================
+        -->
         <argument
-            android:name="PRODUCT_ID"
-            app:argType="long" />
+            android:name="foodId"
+            app:argType="string" />
     </fragment>
 
     <!-- Checkout -->
@@ -108,7 +112,6 @@
         <action
             android:id="@+id/action_checkout_to_map_picker"
             app:destination="@id/mapPickerFragment" />
-        <!-- ACTION DARI CHECKOUT KE DETAIL TRANSAKSI -->
         <action
             android:id="@+id/action_checkout_to_transaction_detail"
             app:destination="@id/transactionDetailFragment"
@@ -123,9 +126,7 @@
         android:label="Pilih Lokasi"
         tools:layout="@layout/fragment_map_picker" />
 
-    <!-- ============================================= -->
-    <!-- FRAGMENT BARU UNTUK DETAIL TRANSAKSI -->
-    <!-- ============================================= -->
+    <!-- Detail Transaksi -->
     <fragment
         android:id="@+id/transactionDetailFragment"
         android:name="com.adetrifauzananisarahel.ui.transaksi.TransactionDetailFragment"

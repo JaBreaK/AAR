@@ -221,7 +221,7 @@ public class CheckoutFragment extends Fragment {
             // Ambil alamat dari produk pertama di keranjang
             if (!cartItemsForTransaction.isEmpty()) {
                 long firstProductId = cartItemsForTransaction.get(0).getProductId();
-                Cursor productCursor = dbHelper.getProductById(firstProductId);
+                Cursor productCursor = dbHelper.getProductById(String.valueOf(firstProductId));
                 if(productCursor != null && productCursor.moveToFirst()){
                     originAddress = productCursor.getString(productCursor.getColumnIndexOrThrow(DatabaseContract.ProductEntry.COLUMN_ADDRESS));
                     productCursor.close();

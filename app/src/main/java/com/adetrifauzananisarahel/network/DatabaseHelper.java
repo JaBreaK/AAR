@@ -16,14 +16,10 @@ import com.adetrifauzananisarahel.model.Transaction;
 
 import java.io.File;
 
-/**
- * DatabaseHelper versi tanpa dummy data.
- * Pastikan untuk menaikkan DATABASE_VERSION agar onUpgrade terpanggil di instalasi lama.
- */
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "AplikasiJualan_v3.db";
-    // Naikkan ke versi baru (sesuaikan: jika sebelumnya 9, ubah ke 10 atau lebih tinggi)
-    private static final int DATABASE_VERSION = 10;
+    private static final String DATABASE_NAME = "AplikasiJualan_v4.db";
+    // PERBAIKAN 1: NAIKKAN DATABASE_VERSION UNTUK Memicu onUpgrade()
+    private static final int DATABASE_VERSION = 11; // Jika sebelumnya 10, naikkan jadi 11
 
     private final Context context;
 
@@ -37,9 +33,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UserEntry.COLUMN_PROFILE_PICTURE_PATH + " TEXT" +
                     ")";
 
+    // PERBAIKAN 2: Tambahkan kolom COLUMN_SERVER_ID untuk menyimpan ID dari API (misal: "menu-001")
     private static final String SQL_CREATE_PRODUCT_TABLE =
             "CREATE TABLE " + ProductEntry.TABLE_NAME + " (" +
                     ProductEntry._ID + " INTEGER PRIMARY KEY," +
+                    ProductEntry.COLUMN_SERVER_ID + " TEXT UNIQUE," + // <-- KOLOM BARU
                     ProductEntry.COLUMN_NAME + " TEXT," +
                     ProductEntry.COLUMN_PRICE + " TEXT," +
                     ProductEntry.COLUMN_IMAGE_PATH + " TEXT," +
@@ -53,11 +51,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     CarouselEntry.COLUMN_IMAGE_PATH + " TEXT" +
                     ")";
 
+    // PERBAIKAN 3: Ubah tipe data COLUMN_PRODUCT_ID dari INTEGER menjadi TEXT
     private static final String SQL_CREATE_CART_TABLE =
             "CREATE TABLE " + CartEntry.TABLE_NAME + " (" +
                     CartEntry._ID + " INTEGER PRIMARY KEY," +
                     CartEntry.COLUMN_USER_USERNAME + " TEXT," +
-                    CartEntry.COLUMN_PRODUCT_ID + " INTEGER," +
+                    CartEntry.COLUMN_PRODUCT_ID + " TEXT," + // <-- DIUBAH MENJADI TEXT
                     CartEntry.COLUMN_PRODUCT_NAME + " TEXT," +
                     CartEntry.COLUMN_PRODUCT_PRICE + " TEXT," +
                     CartEntry.COLUMN_PRODUCT_IMAGE_PATH + " TEXT," +
@@ -84,40 +83,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Buat semua tabel
         db.execSQL(SQL_CREATE_USER_TABLE);
         db.execSQL(SQL_CREATE_PRODUCT_TABLE);
         db.execSQL(SQL_CREATE_CAROUSEL_TABLE);
         db.execSQL(SQL_CREATE_CART_TABLE);
         db.execSQL(SQL_CREATE_TRANSACTIONS_TABLE);
-
-        // Jika ingin tetap memiliki akun admin default, biarkan baris ini.
-        // Jika tidak, bisa dihapus atau di-comment.
         addAdmin(db);
-
-        // Tidak ada data dummy lainnya. Jika sempat ada method addInitialData sebelumnya, di sini tidak dipanggil.
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Pembersihan file gambar dummy lama (jika ada)
         clearInternalImageDir();
-
-        // Drop tabel lama
         db.execSQL("DROP TABLE IF EXISTS " + UserEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ProductEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + CarouselEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + CartEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TransactionEntry.TABLE_NAME);
-
-        // Buat ulang tabel tanpa dummy
         onCreate(db);
     }
 
-    /**
-     * Hapus semua file dalam direktori internal "imageDir".
-     * Berguna untuk memastikan file dummy tidak tertinggal.
-     */
     private void clearInternalImageDir() {
         try {
             File dir = context.getDir("imageDir", Context.MODE_PRIVATE);
@@ -125,10 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        boolean deleted = file.delete();
-                        if (!deleted) {
-                            Log.w("DatabaseHelper", "Gagal menghapus file: " + file.getAbsolutePath());
-                        }
+                        file.delete();
                     }
                 }
             }
@@ -137,19 +118,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * Menambahkan akun admin default.
-     * Jika tidak diinginkan, panggilan ke method ini bisa dihapus pada onCreate.
-     */
     private void addAdmin(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(UserEntry.COLUMN_USERNAME, "admin");
         values.put(UserEntry.COLUMN_PASSWORD, "admin123");
         values.put(UserEntry.COLUMN_ROLE, "admin");
-        long row = db.insert(UserEntry.TABLE_NAME, null, values);
-        if (row == -1) {
-            Log.w("DatabaseHelper", "Gagal menambahkan admin default (mungkin sudah ada).");
-        }
+        db.insert(UserEntry.TABLE_NAME, null, values);
     }
 
     // =====================
@@ -213,9 +187,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Method CRUD Product
     // =====================
 
-    public boolean addProduct(String name, String price, String imagePath, String description, String address) {
+    public boolean addProduct(String serverId, String name, String price, String imagePath, String description, String address) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(ProductEntry.COLUMN_SERVER_ID, serverId); // Simpan juga server_id
         values.put(ProductEntry.COLUMN_NAME, name);
         values.put(ProductEntry.COLUMN_PRICE, price);
         values.put(ProductEntry.COLUMN_IMAGE_PATH, imagePath);
@@ -230,10 +205,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM " + ProductEntry.TABLE_NAME, null);
     }
 
-    public Cursor getProductById(long id) {
+    // PERBAIKAN 4: Ubah method ini untuk menerima String dan mencari di kolom server_id
+    public Cursor getProductById(String serverId) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.query(ProductEntry.TABLE_NAME, null,
-                ProductEntry._ID + " = ?", new String[]{String.valueOf(id)},
+                ProductEntry.COLUMN_SERVER_ID + " = ?", new String[]{serverId},
                 null, null, null);
     }
 
@@ -285,11 +261,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Method Cart & Transaction
     // ==============================
 
-    public void addToCart(String username, long productId) {
+    // PERBAIKAN 5: Ubah method ini untuk menerima productId sebagai String
+    public void addToCart(String username, String productId) {
         SQLiteDatabase db = this.getWritableDatabase();
         String[] projection = { CartEntry._ID, CartEntry.COLUMN_QUANTITY };
         String selection = CartEntry.COLUMN_USER_USERNAME + " = ? AND " + CartEntry.COLUMN_PRODUCT_ID + " = ?";
-        String[] selectionArgs = { username, String.valueOf(productId) };
+        String[] selectionArgs = { username, productId };
         Cursor cursor = db.query(CartEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {

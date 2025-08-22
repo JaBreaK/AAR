@@ -1,12 +1,11 @@
 package com.adetrifauzananisarahel.model; // Pastikan nama package ini sesuai dengan project kamu
 
 import com.google.gson.annotations.SerializedName;
-import java.util.List;
 
 /**
  * Ini adalah kelas generik (umum) untuk membungkus semua respons dari API.
  * Tipe <T> artinya 'Tipe data apa saja'. Jadi kelas ini bisa dipakai untuk
- * membungkus List<MenuCategory>, List<User>, atau data lainnya dari server.
+ * membungkus FoodItem, List<MenuCategory>, atau data lainnya dari server.
  */
 public class ApiResponse<T> {
 
@@ -16,8 +15,12 @@ public class ApiResponse<T> {
     @SerializedName("message")
     private String message;
 
+    // =======================================================================================
+    // PERBAIKAN UTAMA: Hapus 'List<>' agar 'data' bisa menjadi tipe apa saja (T),
+    // baik itu satu objek (FoodItem) maupun sebuah daftar (List<MenuCategory>).
+    // =======================================================================================
     @SerializedName("data")
-    private List<T> data; // 'data' bisa berisi list dengan tipe apa saja
+    private T data;
 
     // --- Getters ---
     public String getStatus() {
@@ -28,7 +31,8 @@ public class ApiResponse<T> {
         return message;
     }
 
-    public List<T> getData() {
+    // Getter ini sekarang akan mengembalikan tipe data yang benar sesuai kebutuhan
+    public T getData() {
         return data;
     }
 }

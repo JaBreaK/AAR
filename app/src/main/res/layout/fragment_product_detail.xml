@@ -9,10 +9,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.ProductDetailFragment">
+        tools:context=".ui.product.ProductDetailFragment">
 
         <ImageView
-            android:id="@+id/image_view_product"
+            android:id="@+id/imageViewProduct"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
@@ -23,7 +23,7 @@
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <TextView
-            android:id="@+id/text_view_product_name"
+            android:id="@+id/textViewProductName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -33,18 +33,18 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_view_product"
+            app:layout_constraintTop_toBottomOf="@id/imageViewProduct"
             tools:text="Nama Produk Super Panjang" />
 
         <TextView
-            android:id="@+id/text_view_product_price"
+            android:id="@+id/textViewProductPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textColor="?attr/colorPrimary"
-            app:layout_constraintStart_toStartOf="@id/text_view_product_name"
-            app:layout_constraintTop_toBottomOf="@id/text_view_product_name"
+            app:layout_constraintStart_toStartOf="@id/textViewProductName"
+            app:layout_constraintTop_toBottomOf="@id/textViewProductName"
             tools:text="Rp 100.000" />
 
         <TextView
@@ -55,10 +55,9 @@
             android:text="Deskripsi Produk"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@id/text_view_product_price"
-            app:layout_constraintTop_toBottomOf="@id/text_view_product_price" />
+            app:layout_constraintStart_toStartOf="@id/textViewProductPrice"
+            app:layout_constraintTop_toBottomOf="@id/textViewProductPrice" />
 
-        <!-- [BARU] Tombol Speaker untuk Text-to-Speech -->
         <ImageButton
             android:id="@+id/button_speak"
             android:layout_width="40dp"
@@ -74,22 +73,22 @@
             app:layout_constraintTop_toTopOf="@+id/label_description" />
 
         <TextView
-            android:id="@+id/text_view_product_description"
+            android:id="@+id/textViewProductDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
             android:lineSpacingExtra="4dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            app:layout_constraintEnd_toEndOf="@id/text_view_product_name"
+            app:layout_constraintEnd_toEndOf="@id/textViewProductName"
             app:layout_constraintStart_toStartOf="@id/label_description"
             app:layout_constraintTop_toBottomOf="@id/label_description"
-            app:layout_constraintBottom_toTopOf="@id/button_add_to_cart"
+            app:layout_constraintBottom_toTopOf="@id/buttonAddToCart"
             app:layout_constraintVertical_bias="0.0"
             tools:text="Ini adalah deskripsi produk yang sangat detail dan menjelaskan semua keunggulan dari produk ini. Bisa sangat panjang dan berisi beberapa paragraf." />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_add_to_cart"
+            android:id="@+id/buttonAddToCart"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -99,6 +98,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

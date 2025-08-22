@@ -17,14 +17,29 @@ import java.util.Locale;
 
 public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final List<Object> homeList; // List ini akan berisi MenuCategory dan MenuItem
+    private final List<Object> homeList;
+
+    // =========================================================================
+    // LANGKAH 1: Buat interface untuk menangani klik
+    // =========================================================================
+    private final OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(FoodItem item);
+    }
+    // =========================================================================
 
     private static final int VIEW_TYPE_CATEGORY = 1;
     private static final int VIEW_TYPE_ITEM = 2;
 
-    public HomeAdapter(List<Object> homeList) {
+    // =========================================================================
+    // LANGKAH 2: Modifikasi constructor untuk menerima listener
+    // =========================================================================
+    public HomeAdapter(List<Object> homeList, OnItemClickListener listener) {
         this.homeList = homeList;
+        this.listener = listener;
     }
+    // =========================================================================
 
     @Override
     public int getItemViewType(int position) {
@@ -56,7 +71,11 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((CategoryViewHolder) holder).bind(category);
         } else {
             FoodItem item = (FoodItem) homeList.get(position);
-            ((ItemViewHolder) holder).bind(item);
+            // =========================================================================
+            // LANGKAH 3: Panggil listener saat item di-bind ke ViewHolder
+            // =========================================================================
+            ((ItemViewHolder) holder).bind(item, listener);
+            // =========================================================================
         }
     }
 
@@ -65,7 +84,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return homeList.size();
     }
 
-    // ViewHolder untuk Judul Kategori
+    // ViewHolder untuk Judul Kategori (Tidak ada perubahan)
     static class CategoryViewHolder extends RecyclerView.ViewHolder {
         TextView tvCategoryTitle;
         public CategoryViewHolder(@NonNull View itemView) {
@@ -88,7 +107,9 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvMenuDescription = itemView.findViewById(R.id.tv_menu_description);
             tvMenuPrice = itemView.findViewById(R.id.tv_menu_price);
         }
-        void bind(FoodItem item) {
+
+        // Modifikasi method bind untuk menerima listener
+        void bind(FoodItem item, OnItemClickListener listener) {
             tvMenuName.setText(item.getName());
             tvMenuDescription.setText(item.getDescription());
 
@@ -100,8 +121,8 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .placeholder(R.drawable.buah)
                     .into(ivMenuImage);
 
-            // Tambahkan OnClickListener jika perlu
-            // itemView.setOnClickListener(v -> ... );
+            // Tambahkan OnClickListener di sini
+            itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
     }
 }

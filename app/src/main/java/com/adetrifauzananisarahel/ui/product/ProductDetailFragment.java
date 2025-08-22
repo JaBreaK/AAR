@@ -1,12 +1,6 @@
 package com.adetrifauzananisarahel.ui.product;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,38 +10,32 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.adetrifauzananisarahel.R;
-import com.adetrifauzananisarahel.network.DatabaseContract;
-import com.adetrifauzananisarahel.network.DatabaseHelper;
 import com.adetrifauzananisarahel.databinding.FragmentProductDetailBinding;
+import com.adetrifauzananisarahel.model.ApiResponse;
+import com.adetrifauzananisarahel.model.FoodItem;
+import com.adetrifauzananisarahel.network.ApiClient;
+import com.adetrifauzananisarahel.network.ApiService;
 import com.bumptech.glide.Glide;
 
+import java.text.NumberFormat;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProductDetailFragment extends Fragment {
 
     private FragmentProductDetailBinding binding;
-    private DatabaseHelper dbHelper;
-    private long productId;
-
-    // Variabel untuk TextToSpeech Engine
-    private TextToSpeech tts;
-    private boolean isTtsReady = false;
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    private String productId;
+    private FoodItem currentProduct;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentProductDetailBinding.inflate(inflater, container, false);
-        dbHelper = new DatabaseHelper(getContext());
-
-        // Inisialisasi TextToSpeech
-        initializeTts();
-
         return binding.getRoot();
     }
 
@@ -55,117 +43,86 @@ public class ProductDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (getArguments() != null) {
-            productId = getArguments().getLong("PRODUCT_ID", -1);
-            if (productId != -1) {
-                loadProductDetails();
+        // =====================================================================
+        // PENANGKAP ERROR DIMULAI DI SINI
+        // =====================================================================
+        try {
+            // Semua kode asli kita sekarang ada di dalam blok 'try'
+            // Ambil ID produk yang dikirim dari HomeFragment
+            if (getArguments() != null) {
+                this.productId = getArguments().getString("foodId");
             }
-        }
 
-        binding.buttonAddToCart.setOnClickListener(v -> addToCart());
-
-        // Set listener untuk tombol speaker
-        binding.buttonSpeak.setOnClickListener(v -> speakProductDetails());
-    }
-
-    private void initializeTts() {
-        tts = new TextToSpeech(getContext(), status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                // Set bahasa ke Bahasa Indonesia
-                int result = tts.setLanguage(new Locale("id", "ID"));
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    Log.e("TTS", "Bahasa Indonesia tidak didukung di perangkat ini.");
-                    isTtsReady = false;
-                } else {
-                    isTtsReady = true;
-                }
+            // Jika ID valid, panggil API untuk mengambil detailnya
+            if (this.productId != null && !this.productId.isEmpty()) {
+                fetchProductDetailsFromApi();
             } else {
-                Log.e("TTS", "Inisialisasi TextToSpeech gagal. Status: " + status);
-                isTtsReady = false;
+                Toast.makeText(getContext(), "ID produk tidak valid.", Toast.LENGTH_SHORT).show();
             }
-        });
-    }
 
-    private void speakProductDetails() {
-        if (!isTtsReady) {
-            Toast.makeText(getContext(), "Fitur suara belum siap, coba lagi.", Toast.LENGTH_SHORT).show();
-            // Coba inisialisasi ulang jika gagal sebelumnya
-            initializeTts();
-            return;
-        }
-
-        // Pastikan view tidak null
-        if (binding == null) return;
-
-        // Gabungkan nama dan deskripsi untuk dibacakan
-        String productName = binding.textViewProductName.getText().toString();
-        String productDescription = binding.textViewProductDescription.getText().toString();
-        String textToSpeak = "Nama produk: " + productName + ". " + "Deskripsi: " + productDescription;
-
-        if (!textToSpeak.isEmpty()) {
-            // Menggunakan QUEUE_FLUSH agar ucapan sebelumnya berhenti dan diganti yang baru
-            tts.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
-        } else {
-            Toast.makeText(getContext(), "Tidak ada detail untuk dibacakan.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void loadProductDetails() {
-        executor.execute(() -> {
-            final Cursor cursor = dbHelper.getProductById(productId);
-            if (cursor != null && cursor.moveToFirst()) {
-                String name = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.ProductEntry.COLUMN_NAME));
-                String price = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.ProductEntry.COLUMN_PRICE));
-                String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.ProductEntry.COLUMN_IMAGE_PATH));
-                String description = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.ProductEntry.COLUMN_DESCRIPTION));
-                cursor.close();
-
-                // Update UI di main thread
-                mainThreadHandler.post(() -> {
-                    // Pastikan fragment masih terpasang dan binding tidak null
-                    if (isAdded() && binding != null) {
-                        if (getActivity() != null) {
-                            getActivity().setTitle(name);
-                        }
-                        binding.textViewProductName.setText(name);
-                        binding.textViewProductPrice.setText("Rp " + price);
-                        binding.textViewProductDescription.setText(description);
-                        Glide.with(requireContext()).load(imagePath).placeholder(R.drawable.pp).into(binding.imageViewProduct);
-                    }
-                });
-            }
-        });
-    }
-
-    private void addToCart() {
-        if (getActivity() == null) return;
-
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", null);
-
-        if (username == null) {
-            Toast.makeText(getContext(), "Anda harus login untuk menambah ke keranjang", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // SESUDAH
-        executor.execute(() -> {
-            dbHelper.addToCart(username, productId); // Langsung panggil saja
-            mainThreadHandler.post(() -> {
-                // Langsung tampilkan pesan berhasil (mengasumsikan selalu sukses)
-                Toast.makeText(getContext(), "Produk ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show();
+            // Fungsi tombol Add to Cart
+            binding.buttonAddToCart.setOnClickListener(v -> {
+                if (currentProduct != null) {
+                    // TODO: Nanti, logika add to cart juga harus memanggil API
+                    Toast.makeText(getContext(), currentProduct.getName() + " ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show();
+                }
             });
+
+        } catch (Exception e) {
+            // JIKA TERJADI CRASH, BUKANNYA FORCE CLOSE, KODE INI YANG AKAN DIJALANKAN
+            // Menampilkan pesan error asli di layar
+            String errorMessage = e.toString();
+            Toast.makeText(getContext(), "PENYEBAB CRASH: " + errorMessage, Toast.LENGTH_LONG).show();
+
+            // Mencatat error ke Logcat untuk jaga-jaga
+            Log.e("MANUAL_CRASH_REPORT", "Error terdeteksi di ProductDetailFragment: ", e);
+        }
+        // =====================================================================
+        // PENANGKAP ERROR BERAKHIR DI SINI
+        // =====================================================================
+    }
+
+    private void fetchProductDetailsFromApi() {
+        // ... (method ini tidak diubah)
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<ApiResponse<FoodItem>> call = apiService.getProductDetail(this.productId);
+
+        call.enqueue(new Callback<ApiResponse<FoodItem>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<FoodItem>> call, @NonNull Response<ApiResponse<FoodItem>> response) {
+                if (response.isSuccessful() && response.body() != null && "success".equals(response.body().getStatus())) {
+                    currentProduct = response.body().getData();
+                    if (currentProduct != null) {
+                        updateUi(currentProduct);
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Gagal memuat detail produk.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<FoodItem>> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
+    }
+
+    private void updateUi(FoodItem product) {
+        // ... (method ini tidak diubah)
+        if (getContext() == null || binding == null) return;
+        binding.textViewProductName.setText(product.getName());
+        binding.textViewProductDescription.setText(product.getDescription());
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("in", "ID"));
+        binding.textViewProductPrice.setText(formatter.format(product.getPrice()));
+        Glide.with(getContext())
+                .load(product.getImageUrl())
+                .placeholder(R.drawable.pp)
+                .into(binding.imageViewProduct);
     }
 
     @Override
     public void onDestroyView() {
-        // Hentikan dan matikan TTS engine untuk mencegah memory leak
-        if (tts != null) {
-            tts.stop();
-            tts.shutdown();
-        }
         super.onDestroyView();
-        binding = null; // Wajib untuk mencegah memory leak
+        binding = null;
     }
 }
