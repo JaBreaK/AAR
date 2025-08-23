@@ -112,7 +112,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickLis
                 homeList.addAll(category.getItems());
             }
         }
-        homeAdapter.notifyDataSetChanged();
+
     }
 
     @Override

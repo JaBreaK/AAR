@@ -24,11 +24,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="10dp"
                 android:text="Selamat Pagi, Bro!"
+                android:elevation="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textStyle="bold"
-                android:textColor="@color/myTextColorPrimary"
+                android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,7 +40,8 @@
                 android:drawablePadding="4dp"
                 android:gravity="center"
                 android:text="Pesan untuk lokasi: Jaksel"
-                android:textColor="@color/myTextColorPrimary"
+                android:elevation="4dp"
+                android:textColor="@color/white"
                 app:drawableStartCompat="@drawable/ic_location_pin"
                 app:layout_constraintStart_toStartOf="@id/tv_greeting"
                 app:layout_constraintTop_toBottomOf="@id/tv_greeting" />
@@ -49,13 +51,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="-30dp"
                 android:layout_marginEnd="16dp"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_location">
+                app:layout_constraintTop_toBottomOf="@id/viewPagerCarousel">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -70,13 +72,16 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPagerCarousel"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:layout_marginTop="24dp"
+                android:layout_height="400dp"
+
+                android:background="@drawable/bgcb"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                app:layout_constraintTop_toBottomOf="@id/card_search" />
+
+
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_category_label"
@@ -89,7 +94,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/myTextColorPrimary"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/viewPagerCarousel" />
+                app:layout_constraintTop_toBottomOf="@id/card_search" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_categories"

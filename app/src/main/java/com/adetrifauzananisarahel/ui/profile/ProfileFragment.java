@@ -77,7 +77,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         loadUserProfile();
-        setupClickListeners();
+
     }
 
     private void loadUserProfile() {
@@ -136,23 +136,7 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void setupClickListeners() {
-        binding.textChangePhoto.setOnClickListener(v -> openGallery());
-        binding.imageViewProfile.setOnClickListener(v -> openGallery());
-        binding.buttonSave.setOnClickListener(v -> saveProfileChanges());
-        binding.buttonLogout.setOnClickListener(v -> logoutUser());
 
-        // TAMBAHKAN INI
-        binding.buttonAdminPanel.setOnClickListener(v -> {
-            NavHostFragment.findNavController(this).navigate(R.id.action_navigation_profile_to_adminManageProductsFragment);
-            // Ganti R.id.action_... dengan action navigasi yang benar di nav_graph kamu
-            // Contoh: NavHostFragment.findNavController(this).navigate(R.id.action_profileFragment_to_adminManageProductFragment);
-            Toast.makeText(getContext(), "Menuju Panel Admin...", Toast.LENGTH_SHORT).show();
-        });
-        binding.buttonManageCarousel.setOnClickListener(v -> {
-            NavHostFragment.findNavController(this).navigate(R.id.action_profile_to_manage_carousel);
-        });
-    }
 
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

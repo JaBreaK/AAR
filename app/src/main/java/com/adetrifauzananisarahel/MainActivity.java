@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Set support action bar
-        setSupportActionBar(binding.toolbar);
+
+
 
         BottomNavigationView navView = binding.navView;
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_home, R.id.navigation_cart, R.id.navigation_transaksi, R.id.navigation_profile)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
@@ -76,8 +76,5 @@ public class MainActivity extends AppCompatActivity {
         // --- AKHIR DARI KODE WARNA ---
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
-    }
+
 }

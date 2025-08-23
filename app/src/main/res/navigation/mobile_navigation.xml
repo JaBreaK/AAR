@@ -39,51 +39,16 @@
     </fragment>
 
     <!-- Profile -->
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.adetrifauzananisarahel.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile">
-        <action
-            android:id="@+id/action_navigation_profile_to_adminManageProductsFragment"
-            app:destination="@id/adminManageProductsFragment" />
-        <action
-            android:id="@+id/action_profile_to_manage_carousel"
-            app:destination="@id/adminManageCarouselFragment" />
-    </fragment>
+
 
     <!-- Admin: Carousel -->
-    <fragment
-        android:id="@+id/adminManageCarouselFragment"
-        android:name="com.adetrifauzananisarahel.ui.admin.AdminManageCarouselFragment"
-        android:label="Kelola Banner"
-        tools:layout="@layout/fragment_admin_manage_carousel" />
+
 
     <!-- Admin: Produk -->
-    <fragment
-        android:id="@+id/adminManageProductsFragment"
-        android:name="com.adetrifauzananisarahel.ui.admin.AdminManageProductsFragment"
-        android:label="Kelola Produk"
-        tools:layout="@layout/fragment_admin_manage_products">
-        <action
-            android:id="@+id/action_adminManageProductsFragment_to_addEditProductFragment"
-            app:destination="@id/addEditProductFragment" />
-    </fragment>
+
 
     <!-- Admin: Tambah/Edit Produk -->
-    <fragment
-        android:id="@+id/addEditProductFragment"
-        android:name="com.adetrifauzananisarahel.ui.admin.AddEditProductFragment"
-        android:label="Tambah/Edit Produk"
-        tools:layout="@layout/fragment_add_edit_product">
-        <argument
-            android:name="PRODUCT_ID"
-            app:argType="long"
-            android:defaultValue="-1L" />
-        <action
-            android:id="@+id/action_addEditProductFragment_to_mapPickerFragment"
-            app:destination="@id/mapPickerFragment" />
-    </fragment>
+
 
     <!-- Detail Produk -->
     <fragment
