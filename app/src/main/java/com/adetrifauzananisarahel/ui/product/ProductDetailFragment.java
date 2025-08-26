@@ -1,7 +1,6 @@
 package com.adetrifauzananisarahel.ui.product;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,32 +8,48 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProvider; // Import baru
 
-import com.adetrifauzananisarahel.R;
 import com.adetrifauzananisarahel.databinding.FragmentProductDetailBinding;
-import com.adetrifauzananisarahel.model.ApiResponse;
-import com.adetrifauzananisarahel.model.FoodItem;
-import com.adetrifauzananisarahel.network.ApiClient;
-import com.adetrifauzananisarahel.network.ApiService;
+import com.adetrifauzananisarahel.model.CartItem; // Import baru
+import com.adetrifauzananisarahel.model.MenuItemResponse;
+import com.adetrifauzananisarahel.viewmodel.CartViewModel; // Import baru
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Map; // Import baru
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class ProductDetailFragment extends Fragment {
+public class ProductDetailFragment extends BottomSheetDialogFragment {
 
     private FragmentProductDetailBinding binding;
-    private String productId;
-    private FoodItem currentProduct;
+    private MenuItemResponse menuItem;
+
+    // --- BARU: Tambahkan ViewModel untuk keranjang ---
+    private CartViewModel cartViewModel;
+
+    public static ProductDetailFragment newInstance(MenuItemResponse menuItem) {
+        ProductDetailFragment fragment = new ProductDetailFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("PRODUCT_ITEM", menuItem);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            menuItem = getArguments().getParcelable("PRODUCT_ITEM");
+        }
+        // --- BARU: Inisialisasi ViewModel ---
+        cartViewModel = new ViewModelProvider(requireActivity()).get(CartViewModel.class);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentProductDetailBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -43,81 +58,69 @@ public class ProductDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // =====================================================================
-        // PENANGKAP ERROR DIMULAI DI SINI
-        // =====================================================================
-        try {
-            // Semua kode asli kita sekarang ada di dalam blok 'try'
-            // Ambil ID produk yang dikirim dari HomeFragment
-            if (getArguments() != null) {
-                this.productId = getArguments().getString("foodId");
-            }
-
-            // Jika ID valid, panggil API untuk mengambil detailnya
-            if (this.productId != null && !this.productId.isEmpty()) {
-                fetchProductDetailsFromApi();
-            } else {
-                Toast.makeText(getContext(), "ID produk tidak valid.", Toast.LENGTH_SHORT).show();
-            }
-
-            // Fungsi tombol Add to Cart
-            binding.buttonAddToCart.setOnClickListener(v -> {
-                if (currentProduct != null) {
-                    // TODO: Nanti, logika add to cart juga harus memanggil API
-                    Toast.makeText(getContext(), currentProduct.getName() + " ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        } catch (Exception e) {
-            // JIKA TERJADI CRASH, BUKANNYA FORCE CLOSE, KODE INI YANG AKAN DIJALANKAN
-            // Menampilkan pesan error asli di layar
-            String errorMessage = e.toString();
-            Toast.makeText(getContext(), "PENYEBAB CRASH: " + errorMessage, Toast.LENGTH_LONG).show();
-
-            // Mencatat error ke Logcat untuk jaga-jaga
-            Log.e("MANUAL_CRASH_REPORT", "Error terdeteksi di ProductDetailFragment: ", e);
+        if (menuItem != null) {
+            populateUI();
+            setupListeners();
+            // --- BARU: Amati perubahan di keranjang ---
+            observeCart();
         }
-        // =====================================================================
-        // PENANGKAP ERROR BERAKHIR DI SINI
-        // =====================================================================
     }
 
-    private void fetchProductDetailsFromApi() {
-        // ... (method ini tidak diubah)
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        Call<ApiResponse<FoodItem>> call = apiService.getProductDetail(this.productId);
+    private void observeCart() {
+        cartViewModel.getCartItems().observe(getViewLifecycleOwner(), this::updateButtonState);
+    }
 
-        call.enqueue(new Callback<ApiResponse<FoodItem>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<FoodItem>> call, @NonNull Response<ApiResponse<FoodItem>> response) {
-                if (response.isSuccessful() && response.body() != null && "success".equals(response.body().getStatus())) {
-                    currentProduct = response.body().getData();
-                    if (currentProduct != null) {
-                        updateUi(currentProduct);
-                    }
-                } else {
-                    Toast.makeText(getContext(), "Gagal memuat detail produk.", Toast.LENGTH_SHORT).show();
-                }
-            }
+    // --- BARU: Method untuk update tampilan tombol ---
+    private void updateButtonState(Map<Integer, CartItem> cartItems) {
+        if (menuItem == null) return;
 
-            @Override
-            public void onFailure(@NonNull Call<ApiResponse<FoodItem>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+        CartItem itemInCart = cartItems.get(menuItem.getId());
+
+        if (itemInCart != null) {
+            // Jika item ADA di keranjang, tampilkan quantity selector
+            binding.btnAddToCartDetail.setVisibility(View.GONE);
+            binding.quantitySelectorGroupDetail.setVisibility(View.VISIBLE);
+            binding.tvQuantityDetail.setText(String.valueOf(itemInCart.getQuantity()));
+        } else {
+            // Jika item TIDAK ADA, tampilkan tombol "Tambah"
+            binding.btnAddToCartDetail.setVisibility(View.VISIBLE);
+            binding.quantitySelectorGroupDetail.setVisibility(View.GONE);
+        }
+    }
+
+    private void populateUI() {
+        // ... (kode ini tidak berubah)
+        binding.tvProductDetailName.setText(menuItem.getNamaProduk());
+        binding.tvProductDetailDescription.setText(menuItem.getDeskripsi());
+
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(localeID);
+        currencyFormatter.setMaximumFractionDigits(0);
+        binding.tvProductDetailPrice.setText(currencyFormatter.format(menuItem.getHarga()));
+
+        Glide.with(this)
+                .load(menuItem.getGambarUrl())
+                .into(binding.ivProductDetailImage);
+    }
+
+    private void setupListeners() {
+        // --- DIUBAH: Semua listener sekarang memanggil ViewModel ---
+
+        // Listener untuk tombol "Tambah ke Keranjang"
+        binding.btnAddToCartDetail.setOnClickListener(v -> {
+            cartViewModel.addItem(menuItem);
+            Toast.makeText(getContext(), menuItem.getNamaProduk() + " ditambah", Toast.LENGTH_SHORT).show();
         });
-    }
 
-    private void updateUi(FoodItem product) {
-        // ... (method ini tidak diubah)
-        if (getContext() == null || binding == null) return;
-        binding.textViewProductName.setText(product.getName());
-        binding.textViewProductDescription.setText(product.getDescription());
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("in", "ID"));
-        binding.textViewProductPrice.setText(formatter.format(product.getPrice()));
-        Glide.with(getContext())
-                .load(product.getImageUrl())
-                .placeholder(R.drawable.pp)
-                .into(binding.imageViewProduct);
+        // Listener untuk tombol (+)
+        binding.btnIncreaseQuantityDetail.setOnClickListener(v -> {
+            cartViewModel.addItem(menuItem);
+        });
+
+        // Listener untuk tombol (-)
+        binding.btnDecreaseQuantityDetail.setOnClickListener(v -> {
+            cartViewModel.removeItem(menuItem);
+        });
     }
 
     @Override

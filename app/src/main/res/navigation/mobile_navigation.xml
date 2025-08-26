@@ -5,7 +5,6 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
-    <!-- Home -->
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.adetrifauzananisarahel.ui.home.HomeFragment"
@@ -16,90 +15,47 @@
             app:destination="@id/productDetailFragment" />
     </fragment>
 
-    <!-- Cart -->
     <fragment
         android:id="@+id/navigation_cart"
         android:name="com.adetrifauzananisarahel.ui.cart.CartFragment"
         android:label="@string/title_cart"
-        tools:layout="@layout/fragment_cart">
-        <action
-            android:id="@+id/action_cart_to_checkout"
-            app:destination="@id/checkoutFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_cart" />
 
-    <!-- Transaksi -->
     <fragment
         android:id="@+id/navigation_transaksi"
         android:name="com.adetrifauzananisarahel.ui.transaksi.TransaksiFragment"
         android:label="@string/title_transaksi"
-        tools:layout="@layout/fragment_transaksi">
-        <action
-            android:id="@+id/action_transaksi_to_detail"
-            app:destination="@id/transactionDetailFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_transaksi" />
 
-    <!-- Profile -->
-
-
-    <!-- Admin: Carousel -->
-
-
-    <!-- Admin: Produk -->
-
-
-    <!-- Admin: Tambah/Edit Produk -->
-
-
-    <!-- Detail Produk -->
     <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.adetrifauzananisarahel.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <dialog
         android:id="@+id/productDetailFragment"
         android:name="com.adetrifauzananisarahel.ui.product.ProductDetailFragment"
-        android:label="Detail Produk"
-        tools:layout="@layout/fragment_product_detail">
-        <!--
-        ===============================================================
-        PERBAIKAN UTAMA DI SINI:
-        - 'name' diubah menjadi "foodId"
-        - 'argType' diubah menjadi "string"
-        ===============================================================
-        -->
-        <argument
-            android:name="foodId"
-            app:argType="string" />
-    </fragment>
+        android:label="ProductDetailFragment"
+        tools:layout="@layout/fragment_product_detail"/>
 
-    <!-- Checkout -->
+    <dialog
+        android:id="@+id/cartSheetFragment"
+        android:name="com.adetrifauzananisarahel.ui.cart.CartSheetFragment"
+        android:label="CartSheetFragment"
+        tools:layout="@layout/fragment_cart_sheet">
+
+    </dialog>
+
+    <action
+        android:id="@+id/action_global_checkoutFragment"
+        app:destination="@id/checkoutFragment" />
+
     <fragment
         android:id="@+id/checkoutFragment"
         android:name="com.adetrifauzananisarahel.ui.checkout.CheckoutFragment"
         android:label="Checkout"
-        tools:layout="@layout/fragment_checkout">
-        <action
-            android:id="@+id/action_checkout_to_map_picker"
-            app:destination="@id/mapPickerFragment" />
-        <action
-            android:id="@+id/action_checkout_to_transaction_detail"
-            app:destination="@id/transactionDetailFragment"
-            app:popUpTo="@id/navigation_home"
-            app:popUpToInclusive="false" />
-    </fragment>
-
-    <!-- Map Picker -->
-    <fragment
-        android:id="@+id/mapPickerFragment"
-        android:name="com.adetrifauzananisarahel.ui.checkout.MapPickerFragment"
-        android:label="Pilih Lokasi"
-        tools:layout="@layout/fragment_map_picker" />
-
-    <!-- Detail Transaksi -->
-    <fragment
-        android:id="@+id/transactionDetailFragment"
-        android:name="com.adetrifauzananisarahel.ui.transaksi.TransactionDetailFragment"
-        android:label="Detail Transaksi"
-        tools:layout="@layout/fragment_transaction_detail">
-        <argument
-            android:name="TRANSACTION_DATA"
-            app:argType="com.adetrifauzananisarahel.model.Transaction" />
+        tools:layout="@layout/fragment_checkout" >
     </fragment>
 
 </navigation>

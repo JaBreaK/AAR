@@ -1,96 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/iv_cart_item_image"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CornerRadius"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tv_cart_item_name"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="?attr/colorOnSurface"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/btn_remove_item"
+        app:layout_constraintStart_toEndOf="@id/iv_cart_item_image"
+        app:layout_constraintTop_toTopOf="@id/iv_cart_item_image"
+        tools:text="Mie Gacoan Level 4 Super Pedas Sekali" />
 
-        <ImageView
-            android:id="@+id/image_view_cart_product"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+    <TextView
+        android:id="@+id/tv_cart_item_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/tv_cart_item_name"
+        app:layout_constraintBottom_toBottomOf="@id/iv_cart_item_image"
+        tools:text="Rp10.455" />
+
+    <ImageButton
+        android:id="@+id/btn_remove_item"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="?android:attr/textColorSecondary" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_decrease_quantity_cart"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="48dp"
+            app:strokeColor="@color/transparent"
+            android:layout_height="48dp"
+            app:iconTint="@color/black"
+            app:icon="@drawable/remove" />
 
         <TextView
-            android:id="@+id/text_view_cart_product_name"
-            android:layout_width="0dp"
+            android:id="@+id/tv_quantity_cart"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/button_remove_item"
-            app:layout_constraintStart_toEndOf="@id/image_view_cart_product"
-            app:layout_constraintTop_toTopOf="@id/image_view_cart_product"
-            tools:text="Nama Produk yang Sangat Panjang Sekali" />
+            tools:text="1" />
 
-        <TextView
-            android:id="@+id/text_view_cart_product_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="?attr/colorPrimary"
-            app:layout_constraintStart_toStartOf="@id/text_view_cart_product_name"
-            app:layout_constraintTop_toBottomOf="@id/text_view_cart_product_name"
-            tools:text="Rp 25.000" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_increase_quantity_cart"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="48dp"
+            app:iconTint="@color/black"
+            app:strokeColor="@color/transparent"
+            android:layout_height="48dp"
+            app:icon="@drawable/add" />
+    </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/button_remove_item"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/delete"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="Hapus Item"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_remove_item">
-
-            <ImageButton
-                android:id="@+id/button_decrease_quantity"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:scaleType="fitCenter"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/remove" />
-
-            <TextView
-                android:id="@+id/text_view_quantity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:text="1"
-                android:textAppearance="?attr/textAppearanceBody1"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/button_increase_quantity"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:scaleType="fitCenter"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/add" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

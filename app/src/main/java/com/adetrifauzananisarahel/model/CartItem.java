@@ -1,31 +1,45 @@
 package com.adetrifauzananisarahel.model;
 
-public class CartItem {
-    private long cartId;
-    private long productId;
-    private String productName;
-    private String productPrice;
-    private String imagePath;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+// Model ini mirip MenuItemResponse tapi ada quantity
+public class CartItem implements Parcelable {
+    private final MenuItemResponse product;
     private int quantity;
 
-    public CartItem(long cartId, long productId, String productName, String productPrice, String imagePath, int quantity) {
-        this.cartId = cartId;
-        this.productId = productId;
-        this.productName = productName;
-        this.productPrice = productPrice;
-        this.imagePath = imagePath;
+    public CartItem(MenuItemResponse product, int quantity) {
+        this.product = product;
         this.quantity = quantity;
     }
 
-    // Getter methods
-    public long getCartId() { return cartId; }
-    public long getProductId() { return productId; }
-    public String getProductName() { return productName; }
-    public String getProductPrice() { return productPrice; }
-    public String getImagePath() { return imagePath; }
+    public MenuItemResponse getProduct() { return product; }
     public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    // --- Kode Parcelable ---
+    protected CartItem(Parcel in) {
+        product = in.readParcelable(MenuItemResponse.class.getClassLoader());
+        quantity = in.readInt();
+    }
+
+    public static final Creator<CartItem> CREATOR = new Creator<CartItem>() {
+        @Override
+        public CartItem createFromParcel(Parcel in) {
+            return new CartItem(in);
+        }
+        @Override
+        public CartItem[] newArray(int size) {
+            return new CartItem[size];
+        }
+    };
+
+    @Override
+    public int describeContents() { return 0; }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(product, flags);
+        dest.writeInt(quantity);
     }
 }

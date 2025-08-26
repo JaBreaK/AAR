@@ -1,114 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet"
+    android:paddingBottom="24dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_drag_handle" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/iv_product_detail_image"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CornerRadius"
+        tools:src="@tools:sample/backgrounds/scenic" />
+
+    <TextView
+        android:id="@+id/tv_product_detail_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.product.ProductDetailFragment">
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        android:textStyle="bold"
+        tools:text="Mie Gacoan Level 4" />
 
-        <ImageView
-            android:id="@+id/imageViewProduct"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic" />
+    <TextView
+        android:id="@+id/tv_product_detail_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/black"
+        tools:text="Rp10.455" />
 
-        <TextView
-            android:id="@+id/textViewProductName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageViewProduct"
-            tools:text="Nama Produk Super Panjang" />
+    <TextView
+        android:id="@+id/tv_product_detail_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        tools:text="Ini adalah deskripsi panjang mengenai produk mie gacoan level 4 yang sangat pedas dan nikmat, dibuat dengan bahan-bahan berkualitas tinggi." />
 
-        <TextView
-            android:id="@+id/textViewProductPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:textColor="?attr/colorPrimary"
-            app:layout_constraintStart_toStartOf="@id/textViewProductName"
-            app:layout_constraintTop_toBottomOf="@id/textViewProductName"
-            tools:text="Rp 100.000" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_to_cart_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:text="Tambah ke Keranjang"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        app:cornerRadius="16dp"
+        android:visibility="visible"
+        app:icon="@drawable/keranjang"
+        app:iconGravity="textStart" />
 
-        <TextView
-            android:id="@+id/label_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Deskripsi Produk"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@id/textViewProductPrice"
-            app:layout_constraintTop_toBottomOf="@id/textViewProductPrice" />
-
-        <ImageButton
-            android:id="@+id/button_speak"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Bacakan Deskripsi"
-            android:scaleType="fitCenter"
-            android:padding="4dp"
-            android:src="@drawable/baseline_mic_24"
-            app:layout_constraintBottom_toBottomOf="@+id/label_description"
-            app:layout_constraintStart_toEndOf="@+id/label_description"
-            app:layout_constraintTop_toTopOf="@+id/label_description" />
-
-        <TextView
-            android:id="@+id/textViewProductDescription"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:lineSpacingExtra="4dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            app:layout_constraintEnd_toEndOf="@id/textViewProductName"
-            app:layout_constraintStart_toStartOf="@id/label_description"
-            app:layout_constraintTop_toBottomOf="@id/label_description"
-            app:layout_constraintBottom_toTopOf="@id/buttonAddToCart"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="Ini adalah deskripsi produk yang sangat detail dan menjelaskan semua keunggulan dari produk ini. Bisa sangat panjang dan berisi beberapa paragraf." />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/quantity_selector_group_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonAddToCart"
+            android:id="@+id/btn_decrease_quantity_detail"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="20dp"
+            app:icon="@drawable/remove"
+            app:iconTint="@color/black"
+            app:strokeColor="@color/transparent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_quantity_detail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="Tambah ke Keranjang"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            tools:text="1"
+            app:layout_constraintStart_toEndOf="@id/btn_decrease_quantity_detail"
+            app:layout_constraintEnd_toStartOf="@id/btn_increase_quantity_detail"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_increase_quantity_detail"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:icon="@drawable/add"
+            android:layout_marginEnd="20dp"
+            app:iconTint="@color/black"
+            app:strokeColor="@color/transparent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

@@ -1,166 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pembayaran" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Nama Lengkap">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_customer_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Nomor WhatsApp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_customer_whatsapp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Catatan (Opsional)">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_customer_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:lines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Metode Pembayaran" />
+
+            <RadioGroup
+                android:id="@+id/radio_group_payment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"/>
+
+            <ProgressBar
+                android:id="@+id/progress_bar_payment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:background="?android:attr/dividerHorizontal"/>
+
+            <TextView
+                android:id="@+id/tv_total_price_checkout"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                tools:text="Total: Rp50.000" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_place_order"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        tools:context=".ui.checkout.CheckoutFragment">
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:padding="14dp"
+        android:text="Order Sekarang" />
 
-        <TextView
-            android:id="@+id/label_alamat"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Alamat Pengiriman"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ProgressBar
+        android:id="@+id/progress_bar_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/label_alamat_dipilih"
-            style="@style/TextAppearance.MaterialComponents.Body1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Alamat belum dipilih"
-            android:textColor="?android:attr/textColorSecondary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button_pilih_lokasi"
-            app:layout_constraintTop_toBottomOf="@id/label_alamat" />
-
-        <Button
-            android:id="@+id/button_pilih_lokasi"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pilih di Peta"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/label_alamat_dipilih"
-            app:layout_constraintBottom_toBottomOf="@id/label_alamat_dipilih" />
-
-        <TextView
-            android:id="@+id/label_kurir"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Pilih Kurir"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_pilih_lokasi" />
-
-        <RadioGroup
-            android:id="@+id/radio_group_kurir"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/label_kurir">
-
-            <RadioButton
-                android:id="@+id/radio_jne"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="JNE Reguler (Rp 10.000)" />
-
-            <RadioButton
-                android:id="@+id/radio_sicepat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SiCepat BEST (Rp 12.000)" />
-        </RadioGroup>
-
-        <TextView
-            android:id="@+id/label_pembayaran"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Metode Pembayaran"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/radio_group_kurir" />
-
-        <RadioGroup
-            android:id="@+id/radio_group_pembayaran"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/label_pembayaran">
-
-            <RadioButton
-                android:id="@+id/radio_transfer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Transfer Bank" />
-
-            <RadioButton
-                android:id="@+id/radio_cod"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="COD (Bayar di Tempat)" />
-        </RadioGroup>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_ringkasan"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            app:layout_constraintTop_toBottomOf="@id/radio_group_pembayaran"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-                <TextView style="@style/TextAppearance.MaterialComponents.Headline6" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ringkasan Belanja"/>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?android:attr/listDivider" android:layout_marginVertical="8dp"/>
-
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_alignParentStart="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Subtotal Barang"/>
-                    <TextView android:id="@+id/text_subtotal" android:layout_alignParentEnd="true" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="Rp 150.000"/>
-                </RelativeLayout>
-
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">
-                    <TextView android:layout_alignParentStart="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ongkos Kirim"/>
-                    <TextView android:id="@+id/text_ongkir" android:layout_alignParentEnd="true" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="Rp 10.000"/>
-                </RelativeLayout>
-
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">
-                    <TextView android:layout_alignParentStart="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pajak (11%)"/>
-                    <TextView android:id="@+id/text_pajak" android:layout_alignParentEnd="true" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="Rp 16.500"/>
-                </RelativeLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?android:attr/listDivider" android:layout_marginVertical="8dp"/>
-
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">
-                    <TextView android:layout_alignParentStart="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total Pembayaran" android:textStyle="bold" android:textAppearance="?attr/textAppearanceSubtitle1"/>
-                    <TextView android:id="@+id/text_grand_total" android:layout_alignParentEnd="true" android:layout_width="wrap_content" android:layout_height="wrap_content" tools:text="Rp 176.500" android:textStyle="bold" android:textAppearance="?attr/textAppearanceSubtitle1" android:textColor="?attr/colorPrimary"/>
-                </RelativeLayout>
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <Button
-            android:id="@+id/button_place_order"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Bayar Sekarang"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_ringkasan" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

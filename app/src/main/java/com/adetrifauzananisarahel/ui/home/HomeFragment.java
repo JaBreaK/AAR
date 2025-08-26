@@ -1,8 +1,6 @@
 package com.adetrifauzananisarahel.ui.home;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,43 +9,43 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.adetrifauzananisarahel.R;
-import com.adetrifauzananisarahel.adapter.CarouselAdapter;
 import com.adetrifauzananisarahel.adapter.HomeAdapter;
 import com.adetrifauzananisarahel.databinding.FragmentHomeBinding;
-import com.adetrifauzananisarahel.model.ApiResponse;
-import com.adetrifauzananisarahel.model.CarouselItem;
-import com.adetrifauzananisarahel.model.FoodItem;
-import com.adetrifauzananisarahel.model.MenuCategory;
+import com.adetrifauzananisarahel.model.Category;
+import com.adetrifauzananisarahel.model.MenuItemResponse;
 import com.adetrifauzananisarahel.network.ApiClient;
 import com.adetrifauzananisarahel.network.ApiService;
+import com.adetrifauzananisarahel.ui.product.ProductDetailFragment;
+import com.google.android.material.tabs.TabLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.adetrifauzananisarahel.viewmodel.CartViewModel;
 
 public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickListener {
 
     private FragmentHomeBinding binding;
     private HomeAdapter homeAdapter;
-    private final List<Object> homeList = new ArrayList<>();
-    private final List<MenuCategory> originalCategoryList = new ArrayList<>();
-    private CarouselAdapter carouselAdapter;
-    private final List<CarouselItem> carouselItems = new ArrayList<>();
-    private final Handler sliderHandler = new Handler(Looper.getMainLooper());
-    private Runnable sliderRunnable;
+    private CartViewModel cartViewModel;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
+    // List untuk menampung data yang ditampilkan di adapter
+    private final List<Object> displayedList = new ArrayList<>();
+
+    // List untuk menyimpan SEMUA item dari API (tidak akan diubah)
+    private final List<MenuItemResponse> allMenuItems = new ArrayList<>();
+
+    // List untuk menyimpan kategori yang unik
+    private final List<Category> uniqueCategories = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,62 +56,135 @@ public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        cartViewModel = new ViewModelProvider(requireActivity()).get(CartViewModel.class);
+
         setupUI();
-        fetchHomeData();
+        setupTabListener(); // Siapkan listener untuk tab
+        fetchMenuData();
+
+        cartViewModel.getCartItems().observe(getViewLifecycleOwner(), cartItems -> {
+            if (homeAdapter != null) {
+                homeAdapter.updateCartItems(cartItems);
+            }
+        });
     }
 
-    private void setupUI() {
-        carouselAdapter = new CarouselAdapter(carouselItems);
-        binding.viewPagerCarousel.setAdapter(carouselAdapter);
 
-        homeAdapter = new HomeAdapter(homeList, this);
-        binding.recyclerViewHome.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerViewHome.setNestedScrollingEnabled(false);
+    private void setupUI() {
+        homeAdapter = new HomeAdapter(displayedList, this);
+
+        // --- INI BAGIAN YANG DIUBAH ---
+        // Menggunakan GridLayoutManager dengan 2 kolom
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        binding.recyclerViewHome.setLayoutManager(gridLayoutManager);
+        // --- AKHIR PERUBAHAN ---
+
         binding.recyclerViewHome.setAdapter(homeAdapter);
     }
 
-    private void fetchHomeData() {
+    private void fetchMenuData() {
         binding.progressBar.setVisibility(View.VISIBLE);
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // =================================================================================
-        // PERBAIKAN 1: Tambahkan List<> agar cocok dengan yang ada di ApiService
-        // =================================================================================
-        Call<ApiResponse<List<MenuCategory>>> call = apiService.getHomeData();
+        Call<List<MenuItemResponse>> call = apiService.getMenu();
 
-        call.enqueue(new Callback<ApiResponse<List<MenuCategory>>>() { // <-- PERBAIKAN 2: Sesuaikan tipe data di Callback
+        call.enqueue(new Callback<List<MenuItemResponse>>() {
             @Override
-            public void onResponse(@NonNull Call<ApiResponse<List<MenuCategory>>> call, @NonNull Response<ApiResponse<List<MenuCategory>>> response) { // <-- PERBAIKAN 3: Sesuaikan tipe data di parameter onResponse
+            public void onResponse(@NonNull Call<List<MenuItemResponse>> call, @NonNull Response<List<MenuItemResponse>> response) {
                 binding.progressBar.setVisibility(View.GONE);
 
-                if (response.isSuccessful() && response.body() != null && "success".equals(response.body().getStatus())) {
-                    List<MenuCategory> fetchedData = response.body().getData();
-                    originalCategoryList.clear();
-                    originalCategoryList.addAll(fetchedData);
-                    updateHomeList(fetchedData);
+                if (response.isSuccessful() && response.body() != null) {
+                    allMenuItems.clear();
+                    allMenuItems.addAll(response.body());
+
+                    // Ekstrak kategori unik dan setup tabs
+                    extractAndSetupTabs(allMenuItems);
+
+                    // Tampilkan semua produk secara default
+                    filterListByCategory(null);
                 } else {
-                    Toast.makeText(getContext(), "Gagal memuat data.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Gagal memuat data menu.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ApiResponse<List<MenuCategory>>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<MenuItemResponse>> call, @NonNull Throwable t) {
                 binding.progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void updateHomeList(List<MenuCategory> categories) {
-        homeList.clear();
-        for (MenuCategory category : categories) {
-            if (category.getItems() != null && !category.getItems().isEmpty()) {
-                homeList.add(category);
-                homeList.addAll(category.getItems());
+    // --- LOGIKA BARU UNTUK TABLAYOUT ---
+
+    private void extractAndSetupTabs(List<MenuItemResponse> menuItems) {
+        // Gunakan HashSet untuk memastikan ID kategori unik
+        HashSet<Integer> categoryIds = new HashSet<>();
+        uniqueCategories.clear();
+
+        for (MenuItemResponse item : menuItems) {
+            if (item.getKategori() != null && !categoryIds.contains(item.getKategori().getId())) {
+                categoryIds.add(item.getKategori().getId());
+                uniqueCategories.add(item.getKategori());
             }
         }
 
+        // Urutkan kategori berdasarkan nama (opsional tapi bagus)
+        Collections.sort(uniqueCategories, Comparator.comparing(Category::getNamaKategori));
+
+        // Hapus tab lama dan buat yang baru
+        binding.tabLayoutCategories.removeAllTabs();
+        binding.tabLayoutCategories.addTab(binding.tabLayoutCategories.newTab().setText("Semua"));
+
+        for (Category category : uniqueCategories) {
+            binding.tabLayoutCategories.addTab(binding.tabLayoutCategories.newTab().setText(category.getNamaKategori()));
+        }
     }
+
+    private void setupTabListener() {
+        binding.tabLayoutCategories.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                if (position == 0) {
+                    // Tab "Semua" diklik
+                    filterListByCategory(null);
+                } else {
+                    // Tab kategori lain diklik, kurangi 1 karena ada tab "Semua"
+                    Category selectedCategory = uniqueCategories.get(position - 1);
+                    filterListByCategory(selectedCategory);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+
+    private void filterListByCategory(@Nullable Category category) {
+        List<MenuItemResponse> filteredList = new ArrayList<>();
+        if (category == null) {
+            // Jika null, tampilkan semua item
+            filteredList.addAll(allMenuItems);
+        } else {
+            // Jika ada kategori, filter berdasarkan ID
+            for (MenuItemResponse item : allMenuItems) {
+                if (item.getKategori() != null && item.getKategori().getId() == category.getId()) {
+                    filteredList.add(item);
+                }
+            }
+        }
+
+        // Update list di adapter
+        displayedList.clear();
+        displayedList.addAll(filteredList);
+        homeAdapter.notifyDataSetChanged();
+    }
+
+    // --- AKHIR LOGIKA BARU ---
 
     @Override
     public void onDestroyView() {
@@ -122,18 +193,31 @@ public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickLis
     }
 
     @Override
-    public void onItemClick(FoodItem item) {
-        if (item == null || item.getId() == null) {
-            Toast.makeText(getContext(), "Error: Data produk tidak valid.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Bundle bundle = new Bundle();
-        bundle.putString("foodId", item.getId());
-
-        if (getView() != null) {
-            // Pastikan ID ini SAMA PERSIS dengan ID action di mobile_navigation.xml
-            Navigation.findNavController(getView()).navigate(R.id.action_home_to_product_detail, bundle);
-        }
+    public void onItemDetailClick(MenuItemResponse item) {
+        // Logika lama untuk pindah ke halaman detail
+        if (item == null) return;
+        ProductDetailFragment bottomSheet = ProductDetailFragment.newInstance(item);
+        bottomSheet.show(getParentFragmentManager(), "ProductDetailFragmentTag");
     }
+
+    @Override
+    public void onAddItemClick(MenuItemResponse item) {
+        // Logika baru saat tombol "Tambah" diklik
+        // Untuk sekarang kita tampilkan Toast saja
+        cartViewModel.addItem(item);
+
+        // TODO: Nanti di sini kamu bisa tambahkan logika untuk memasukkan item ke API keranjang
+    }
+    // Tambahkan dua method baru ini untuk -/+
+    @Override
+    public void onIncreaseItemClick(MenuItemResponse item) {
+        cartViewModel.addItem(item);
+    }
+
+    @Override
+    public void onDecreaseItemClick(MenuItemResponse item) {
+        cartViewModel.removeItem(item);
+    }
+
+
 }
