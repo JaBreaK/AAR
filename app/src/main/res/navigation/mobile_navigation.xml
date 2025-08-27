@@ -25,7 +25,11 @@
         android:id="@+id/navigation_transaksi"
         android:name="com.adetrifauzananisarahel.ui.transaksi.TransaksiFragment"
         android:label="@string/title_transaksi"
-        tools:layout="@layout/fragment_transaksi" />
+        tools:layout="@layout/fragment_transaksi" >
+        <action
+            android:id="@+id/action_navigation_transaksi_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
@@ -55,7 +59,32 @@
         android:id="@+id/checkoutFragment"
         android:name="com.adetrifauzananisarahel.ui.checkout.CheckoutFragment"
         android:label="Checkout"
-        tools:layout="@layout/fragment_checkout" >
+        tools:layout="@layout/fragment_checkout">
+
+        <action
+            android:id="@+id/action_checkoutFragment_to_orderSuccessFragment"
+            app:destination="@id/orderSuccessFragment"
+            app:popUpTo="@id/navigation_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/orderSuccessFragment"
+        android:name="com.adetrifauzananisarahel.ui.order.OrderSuccessFragment"
+        android:label="Status Pesanan"
+        tools:layout="@layout/fragment_order_success">
+        <action
+            android:id="@+id/action_orderSuccessFragment_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.adetrifauzananisarahel.ui.order.OrderDetailFragment"
+        android:label="Detail Pesanan"
+        tools:layout="@layout/fragment_order_detail">
+        <argument
+            android:name="ORDER_ID"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

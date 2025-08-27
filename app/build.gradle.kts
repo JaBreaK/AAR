@@ -44,6 +44,8 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.play.services.location)
+    implementation(libs.swiperefreshlayout)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -57,6 +59,11 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("androidx.browser:browser:1.8.0")
+    // Firebase BoM (Bill of Materials)
+    implementation ("com.google.firebase:firebase-bom:33.1.1")
+
+    // Dependency untuk Firebase Cloud Messaging
+    implementation ("com.google.firebase:firebase-messaging")
 
 
 }

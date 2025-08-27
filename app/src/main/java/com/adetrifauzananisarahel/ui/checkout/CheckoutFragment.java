@@ -1,6 +1,7 @@
 package com.adetrifauzananisarahel.ui.checkout;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -37,8 +38,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import androidx.browser.customtabs.CustomTabsIntent;
-import android.net.Uri;
+// Hapus import yang tidak perlu seperti CustomTabs, Intent, Uri
+// import androidx.browser.customtabs.CustomTabsIntent;
+// import android.net.Uri;
+// import android.content.Intent;
 
 public class CheckoutFragment extends Fragment {
 
@@ -57,7 +60,7 @@ public class CheckoutFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        loadUserData();
         displayOrderSummary();
         fetchPaymentMethods();
 
@@ -68,6 +71,8 @@ public class CheckoutFragment extends Fragment {
         Map<Integer, CartItem> cartItems = cartViewModel.getCartItems().getValue();
         if (cartItems == null) return;
 
+        // Reset totalPrice setiap kali dipanggil
+        totalPrice = 0;
         for (CartItem item : cartItems.values()) {
             totalPrice += item.getProduct().getHarga() * item.getQuantity();
         }
@@ -102,22 +107,20 @@ public class CheckoutFragment extends Fragment {
 
     private void populatePaymentMethods(List<PaymentMethod> methods) {
         binding.radioGroupPayment.removeAllViews();
-        // --- BAGIAN BARU: Siapkan ColorStateList ---
         int[][] states = new int[][]{
                 new int[]{android.R.attr.state_checked},
                 new int[]{-android.R.attr.state_checked}
         };
         int[] colors = new int[]{
                 ContextCompat.getColor(requireContext(), R.color.black),
-                ContextCompat.getColor(requireContext(), R.color.abu)
+                ContextCompat.getColor(requireContext(), R.color.abu) // Pastikan R.color.abu ada di colors.xml
         };
         ColorStateList colorStateList = new ColorStateList(states, colors);
-        // --- AKHIR BAGIAN BARU ---
         for (PaymentMethod method : methods) {
             if (method.isActive()) {
                 RadioButton radioButton = new RadioButton(getContext());
                 radioButton.setText(method.getNamaMetode());
-                radioButton.setId(method.getId()); // Penting: ID RadioButton = ID dari API
+                radioButton.setId(method.getId());
                 radioButton.setTextColor(colorStateList);
                 radioButton.setButtonTintList(colorStateList);
                 binding.radioGroupPayment.addView(radioButton);
@@ -138,7 +141,6 @@ public class CheckoutFragment extends Fragment {
 
         binding.progressBarOrder.setVisibility(View.VISIBLE);
 
-        // Siapkan payload
         List<OrderItemPayload> orderItems = new ArrayList<>();
         for (CartItem cartItem : cartViewModel.getCartItems().getValue().values()) {
             orderItems.add(new OrderItemPayload(
@@ -158,7 +160,7 @@ public class CheckoutFragment extends Fragment {
                 customerNotes
         );
 
-        // Panggil API
+        // HANYA ADA SATU PANGGILAN API DI SINI
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         apiService.createOrder(payload).enqueue(new Callback<OrderResponse>() {
             @Override
@@ -166,17 +168,18 @@ public class CheckoutFragment extends Fragment {
                 binding.progressBarOrder.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(getContext(), "Order Berhasil!", Toast.LENGTH_LONG).show();
-                    cartViewModel.clearCart(); // Kosongkan keranjang
+                    cartViewModel.clearCart();
 
-                    // TODO: Navigasi ke halaman sukses order dengan membawa data 'response.body()'
-                    // Contoh:
-                    // Bundle bundle = new Bundle();
-                    // bundle.putParcelable("ORDER_DATA", response.body());
-                    // NavHostFragment.findNavController(CheckoutFragment.this).navigate(R.id.action_checkout_to_success, bundle);
+                    SharedPreferences prefs = requireActivity().getSharedPreferences("user_data", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("nomorWa", customerWa);
+                    editor.putString("customerName", customerName); // <-- TAMBAHKAN INI
+                    editor.apply();
 
-                    // Untuk sementara, kembali ke home
-                    NavHostFragment.findNavController(CheckoutFragment.this).popBackStack(R.id.navigation_home, false);
-
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("ORDER_DATA", response.body());
+                    NavHostFragment.findNavController(CheckoutFragment.this)
+                            .navigate(R.id.action_checkoutFragment_to_orderSuccessFragment, bundle);
                 } else {
                     Toast.makeText(getContext(), "Gagal membuat pesanan", Toast.LENGTH_SHORT).show();
                 }
@@ -188,59 +191,18 @@ public class CheckoutFragment extends Fragment {
                 Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        apiService.createOrder(payload).enqueue(new Callback<OrderResponse>() {
-            @Override
-            public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
-                binding.progressBarOrder.setVisibility(View.GONE);
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(getContext(), "Order Berhasil!", Toast.LENGTH_LONG).show();
-                    cartViewModel.clearCart(); // Kosongkan keranjang
-
-                    // --- BAGIAN BARU DIMULAI DI SINI ---
-
-                    // Ambil ID dari response
-                    int orderId = response.body().getId();
-                    // Buat URL lengkapnya
-                    String url = "https://ayamgorengsuharti.vercel.app/pesanan/" + orderId;
-
-                    // Panggil method untuk membuka URL
-                    openUrlInCustomTab(url);
-
-                    // --- AKHIR BAGIAN BARU ---
-
-                    // Kembali ke halaman utama
-                    NavHostFragment.findNavController(CheckoutFragment.this).popBackStack(R.id.navigation_home, false);
-
-                } else {
-                    Toast.makeText(getContext(), "Gagal membuat pesanan", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<OrderResponse> call, Throwable t) {
-                binding.progressBarOrder.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
     }
-    // --- METHOD BARU UNTUK MEMBUKA CUSTOM TABS ---
-    private void openUrlInCustomTab(String url) {
-        if (getContext() == null) return;
+    // --- BARU: Method untuk membaca SharedPreferences dan mengisi form ---
+    private void loadUserData() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences("user_data", Context.MODE_PRIVATE);
+        String savedName = prefs.getString("customerName", "");
+        String savedWa = prefs.getString("nomorWa", "");
 
-        try {
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            // Optional: Atur warna toolbar agar sesuai dengan tema aplikasi
-            builder.setToolbarColor(ContextCompat.getColor(getContext(), R.color.orange_primary));
-            CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(getContext(), Uri.parse(url));
-        } catch (Exception e) {
-            // Fallback: Jika Chrome Custom Tabs gagal, buka browser biasa
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
-        }
+        binding.etCustomerName.setText(savedName);
+        binding.etCustomerWhatsapp.setText(savedWa);
     }
+
+    // METHOD openUrlInCustomTab SUDAH DIHAPUS
 
     @Override
     public void onDestroyView() {

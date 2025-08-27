@@ -20,7 +20,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        android:text="Keranjang Saya"
+        android:text="Keranjang"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:textStyle="bold" />
 

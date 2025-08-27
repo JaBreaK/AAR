@@ -14,6 +14,15 @@
     <color name="orange_primary">#FF9800</color>
     <color name="grey_light">#F5F5F5</color>
     <color name="myTextColorPrimary">#FF000000</color>
+    <color name="stroke_color">#E0E0E0</color>
+    <color name="green">#00C850</color>
+    <color name="red">#F44336</color>
+    <color name="yellow">#EEB000</color>
+    <color name="blue">#2B7EFD</color>
+    <color name="hijau_muda">#00BAA6</color>
+    <color name="ungu">#AC46FD</color>
+    <color name="gelap">#1E2939</color>
+
 
 
 </resources>
