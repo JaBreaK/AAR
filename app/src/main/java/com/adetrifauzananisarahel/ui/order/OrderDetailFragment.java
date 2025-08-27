@@ -66,7 +66,7 @@ public class OrderDetailFragment extends Fragment {
     // --- BARU: Variabel untuk Polling ---
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable pollingRunnable;
-    private final long POLLING_INTERVAL = 5000; // 30 detik
+    private final long POLLING_INTERVAL = 20000; // 30 detik
     private String currentOrderStatus; // Untuk menyimpan status terakhir
     private boolean isFirstLoad = true; // Untuk menandai pemuatan pertama
     private final ActivityResultLauncher<String> requestPermissionLauncher =
