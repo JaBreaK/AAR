@@ -38,11 +38,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// Hapus import yang tidak perlu seperti CustomTabs, Intent, Uri
-// import androidx.browser.customtabs.CustomTabsIntent;
-// import android.net.Uri;
-// import android.content.Intent;
-
 public class CheckoutFragment extends Fragment {
 
     private FragmentCheckoutBinding binding;
@@ -117,7 +112,8 @@ public class CheckoutFragment extends Fragment {
         };
         ColorStateList colorStateList = new ColorStateList(states, colors);
         for (PaymentMethod method : methods) {
-            if (method.isActive()) {
+            if (method.isActive() && !method.getNamaMetode().toLowerCase(Locale.ROOT).contains("cash")) {
+                // Jika kedua syarat terpenuhi, baru buat dan tampilkan RadioButton
                 RadioButton radioButton = new RadioButton(getContext());
                 radioButton.setText(method.getNamaMetode());
                 radioButton.setId(method.getId());
@@ -154,6 +150,7 @@ public class CheckoutFragment extends Fragment {
         OrderPayload payload = new OrderPayload(
                 orderItems,
                 customerName,
+                "ONLINE",
                 customerWa,
                 totalPrice,
                 selectedPaymentId,

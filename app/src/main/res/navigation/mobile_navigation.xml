@@ -15,11 +15,6 @@
             app:destination="@id/productDetailFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/navigation_cart"
-        android:name="com.adetrifauzananisarahel.ui.cart.CartFragment"
-        android:label="@string/title_cart"
-        tools:layout="@layout/fragment_cart" />
 
     <fragment
         android:id="@+id/navigation_transaksi"
@@ -31,11 +26,6 @@
             app:destination="@id/orderDetailFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.adetrifauzananisarahel.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
 
     <dialog
         android:id="@+id/productDetailFragment"

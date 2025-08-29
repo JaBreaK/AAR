@@ -38,8 +38,8 @@ public interface ApiService {
             @Query("nomorWa") String nomorWa
     );
     // BARU: Endpoint untuk mengambil riwayat pesanan
-    @GET("orders")
-    Call<List<Order>> getOrdersByWa(@Query("nomorWa") String nomorWa);
+    @GET("orders/by-wa/{nomorWa}")
+    Call<List<Order>> getOrdersByWa(@Path("nomorWa") String nomorWa);
 
     @Multipart
     @POST("konfirmasi-pembayaran/{id}")

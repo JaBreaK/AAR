@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = binding.navView;
 
         appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_cart, R.id.navigation_transaksi, R.id.navigation_profile)
+                R.id.navigation_home,  R.id.navigation_transaksi)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
 
@@ -56,9 +56,8 @@ public class MainActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             // Cek apakah halaman saat ini adalah salah satu dari tab utama
             boolean isMainDestination = destination.getId() == R.id.navigation_home ||
-                    destination.getId() == R.id.navigation_cart ||
-                    destination.getId() == R.id.navigation_transaksi ||
-                    destination.getId() == R.id.navigation_profile;
+                    destination.getId() == R.id.navigation_transaksi;
+
 
             if (isMainDestination) {
                 // Jika di halaman utama, TAMPILKAN menu bawah
@@ -106,6 +105,19 @@ public class MainActivity extends AppCompatActivity {
             CartSheetFragment cartSheet = new CartSheetFragment();
             cartSheet.show(getSupportFragmentManager(), cartSheet.getTag());
         });
+
+        observeCart();
+
+        // --- BARU: Tambahkan listener untuk seluruh kapsul ---
+        binding.cartCapsuleBar.setOnClickListener(v -> showCartSheet());
+
+        // --- BARU: Tambahkan juga listener untuk tombol checkout di dalam kapsul ---
+        binding.btnCheckout.setOnClickListener(v -> showCartSheet());
+    }
+
+    private void showCartSheet() {
+        CartSheetFragment cartSheet = new CartSheetFragment();
+        cartSheet.show(getSupportFragmentManager(), cartSheet.getTag());
     }
 
     /**
