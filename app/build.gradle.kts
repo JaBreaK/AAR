@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.adetrifauzananisarahel"
+    namespace = "com.ayamgorengsuharti"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.adetrifauzananisarahel"
+        applicationId = "com.ayamgorengsuharti"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

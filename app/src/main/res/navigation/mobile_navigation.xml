@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.adetrifauzananisarahel.ui.home.HomeFragment"
+        android:name="com.ayamgorengsuharti.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home">
         <action
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/navigation_transaksi"
-        android:name="com.adetrifauzananisarahel.ui.transaksi.TransaksiFragment"
+        android:name="com.ayamgorengsuharti.ui.transaksi.TransaksiFragment"
         android:label="@string/title_transaksi"
         tools:layout="@layout/fragment_transaksi" >
         <action
@@ -29,13 +29,13 @@
 
     <dialog
         android:id="@+id/productDetailFragment"
-        android:name="com.adetrifauzananisarahel.ui.product.ProductDetailFragment"
+        android:name="com.ayamgorengsuharti.ui.product.ProductDetailFragment"
         android:label="ProductDetailFragment"
         tools:layout="@layout/fragment_product_detail"/>
 
     <dialog
         android:id="@+id/cartSheetFragment"
-        android:name="com.adetrifauzananisarahel.ui.cart.CartSheetFragment"
+        android:name="com.ayamgorengsuharti.ui.cart.CartSheetFragment"
         android:label="CartSheetFragment"
         tools:layout="@layout/fragment_cart_sheet">
 
@@ -47,7 +47,7 @@
 
     <fragment
         android:id="@+id/checkoutFragment"
-        android:name="com.adetrifauzananisarahel.ui.checkout.CheckoutFragment"
+        android:name="com.ayamgorengsuharti.ui.checkout.CheckoutFragment"
         android:label="Checkout"
         tools:layout="@layout/fragment_checkout">
 
@@ -59,7 +59,7 @@
 
     <fragment
         android:id="@+id/orderSuccessFragment"
-        android:name="com.adetrifauzananisarahel.ui.order.OrderSuccessFragment"
+        android:name="com.ayamgorengsuharti.ui.order.OrderSuccessFragment"
         android:label="Status Pesanan"
         tools:layout="@layout/fragment_order_success">
         <action
@@ -69,7 +69,7 @@
 
     <fragment
         android:id="@+id/orderDetailFragment"
-        android:name="com.adetrifauzananisarahel.ui.order.OrderDetailFragment"
+        android:name="com.ayamgorengsuharti.ui.order.OrderDetailFragment"
         android:label="Detail Pesanan"
         tools:layout="@layout/fragment_order_detail">
         <argument
