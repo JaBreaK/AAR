@@ -22,6 +22,10 @@
     <color name="hijau_muda">#00BAA6</color>
     <color name="ungu">#AC46FD</color>
     <color name="gelap">#1E2939</color>
+    <color name="orange_dark">#F57C00</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="warm_yellow">#FFF8E1</color>
 
 
 

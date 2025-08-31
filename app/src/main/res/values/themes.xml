@@ -35,6 +35,18 @@
     <style name="Widget.App.TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
 
         <item name="tabRippleColor">@color/orange_primary</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabIndicator">@null</item>
+        <item name="tabPaddingStart">6dp</item>
+        <item name="tabPaddingEnd">6dp</item>
     </style>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+
+        <item name="postSplashScreenTheme">@style/Theme.AAR</item>
+    </style>
+
 
 </resources>

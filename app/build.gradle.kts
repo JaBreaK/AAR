@@ -64,6 +64,8 @@ dependencies {
 
     // Dependency untuk Firebase Cloud Messaging
     implementation ("com.google.firebase:firebase-messaging")
+    implementation ("androidx.core:core-splashscreen:1.0.1")
+
 
 
 }

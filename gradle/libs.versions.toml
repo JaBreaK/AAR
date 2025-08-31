@@ -29,6 +29,7 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 
