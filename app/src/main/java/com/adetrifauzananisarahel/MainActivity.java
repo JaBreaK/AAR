@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
-
-    // --- BARU: Tambahkan ViewModel untuk keranjang ---
     private CartViewModel cartViewModel;
 
     @Override

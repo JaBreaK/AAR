@@ -70,7 +70,7 @@
             android:layout_width="48dp"
             app:strokeColor="@color/transparent"
             android:layout_height="48dp"
-            app:iconTint="@color/black"
+            app:iconTint="@color/orange_primary"
             app:icon="@drawable/remove" />
 
         <TextView
@@ -87,7 +87,7 @@
             android:id="@+id/btn_increase_quantity_cart"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
             android:layout_width="48dp"
-            app:iconTint="@color/black"
+            app:iconTint="@color/orange_primary"
             app:strokeColor="@color/transparent"
             android:layout_height="48dp"
             app:icon="@drawable/add" />

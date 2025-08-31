@@ -15,6 +15,6 @@
         android:text="Judul Kategori"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="?android:attr/textColorPrimary" />
+        android:textColor="@color/orange_primary" />
 
 </LinearLayout>
