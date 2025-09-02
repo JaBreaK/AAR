@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
-// 1. Tambahkan "implements Parcelable"
 public class Category implements Parcelable {
 
     @SerializedName("id")
@@ -13,7 +12,13 @@ public class Category implements Parcelable {
     @SerializedName("nama_kategori")
     private String namaKategori;
 
-    // 2. Tambahkan semua kode Parcelable di bawah ini
+    // --- TAMBAHKAN KONSTRUKTOR INI ---
+    public Category(int id, String namaKategori) {
+        this.id = id;
+        this.namaKategori = namaKategori;
+    }
+    // --- AKHIR TAMBAHAN ---
+
     protected Category(Parcel in) {
         id = in.readInt();
         namaKategori = in.readString();

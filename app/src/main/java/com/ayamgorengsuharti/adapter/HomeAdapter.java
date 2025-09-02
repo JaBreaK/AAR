@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,9 +23,10 @@ import java.util.Map;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ProductViewHolder> {
 
-    private final List<Object> list;
+    private List<MenuItemResponse> list = new ArrayList<>();
     private final OnItemClickListener listener;
     private static Map<Integer, CartItem> cartItems = new HashMap<>();
+
 
     // Interface untuk menangani klik
     public interface OnItemClickListener {
@@ -39,10 +41,14 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ProductViewHol
         notifyDataSetChanged(); // Perbarui seluruh tampilan
     }
 
-    public HomeAdapter(List<Object> list, OnItemClickListener listener) {
-        this.list = list;
+    public HomeAdapter(OnItemClickListener listener) {
         this.listener = listener;
     }
+    public void submitList(List<MenuItemResponse> newList) {
+        this.list = newList;
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override

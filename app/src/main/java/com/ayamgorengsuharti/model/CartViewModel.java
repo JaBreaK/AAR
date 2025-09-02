@@ -12,6 +12,7 @@ public class CartViewModel extends ViewModel {
 
     // Map<Integer, CartItem> -> Key: ID Produk, Value: Objek CartItem
     private final MutableLiveData<Map<Integer, CartItem>> cartItems = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isCartCapsuleVisible = new MutableLiveData<>(false);
 
     public CartViewModel() {
         cartItems.setValue(new HashMap<>());
@@ -56,5 +57,14 @@ public class CartViewModel extends ViewModel {
             currentCart.clear();
             cartItems.setValue(currentCart); // Trigger observer untuk mengosongkan
         }
+    }
+    public LiveData<Boolean> getIsCartCapsuleVisible() {
+        return isCartCapsuleVisible;
+    }
+
+    public void setCartCapsuleVisible(boolean isVisible) {
+        // Cek agar tidak update berulang jika nilainya sama
+        if (this.isCartCapsuleVisible.getValue() != null && this.isCartCapsuleVisible.getValue() == isVisible) return;
+        this.isCartCapsuleVisible.setValue(isVisible);
     }
 }

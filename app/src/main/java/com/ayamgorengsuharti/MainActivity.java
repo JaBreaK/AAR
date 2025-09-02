@@ -66,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
                 if (currentCart != null && !currentCart.isEmpty()) {
                     binding.cartCapsuleBar.setVisibility(View.VISIBLE);
                 } else {
+
                     binding.cartCapsuleBar.setVisibility(View.GONE);
+                    cartViewModel.setCartCapsuleVisible(false);
                 }
                 // --- AKHIR BAGIAN BARU ---
 
@@ -124,12 +126,15 @@ public class MainActivity extends AppCompatActivity {
      */
     private void observeCart() {
         cartViewModel.getCartItems().observe(this, cartItems -> {
-            if (cartItems == null || cartItems.isEmpty()) {
-                // Jika keranjang kosong, sembunyikan kapsul
+            boolean isCartEmpty = cartItems == null || cartItems.isEmpty();
+            // --- UPDATE DI SINI ---
+            if (isCartEmpty) {
                 binding.cartCapsuleBar.setVisibility(View.GONE);
+                cartViewModel.setCartCapsuleVisible(false); // Kirim sinyal: kapsul hilang
             } else {
                 // Jika ada isinya, tampilkan kapsul dan hitung total
                 binding.cartCapsuleBar.setVisibility(View.VISIBLE);
+                cartViewModel.setCartCapsuleVisible(true);
 
                 int totalItems = 0;
                 double totalPrice = 0;
