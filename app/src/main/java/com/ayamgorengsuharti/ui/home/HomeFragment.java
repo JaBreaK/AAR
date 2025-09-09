@@ -34,9 +34,7 @@ import com.ayamgorengsuharti.model.MenuItemResponse;
 import com.ayamgorengsuharti.model.Promo;
 import com.ayamgorengsuharti.network.ApiClient;
 import com.ayamgorengsuharti.network.ApiService;
-import com.ayamgorengsuharti.ui.product.ProductDetailFragment;
 import com.ayamgorengsuharti.viewmodel.CartViewModel;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +47,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import com.google.gson.Gson;
+import androidx.appcompat.app.AppCompatActivity;
+
 
 public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickListener, CategoryAdapter.OnCategoryClickListener {
 
@@ -57,6 +57,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickLis
     private HomeHeaderAdapter headerAdapter;
     private ConcatAdapter concatAdapter;
     private CartViewModel cartViewModel;
+
 
     private final List<MenuItemResponse> allMenuItems = new ArrayList<>();
     private Category selectedCategory = new Category(0, "Semua");
@@ -76,8 +77,10 @@ public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickLis
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         cartViewModel = new ViewModelProvider(requireActivity()).get(CartViewModel.class);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(binding.topAppBar);
 
         setupUI();
+        setupSearchListener();
         fetchMenuData();
 
         // --- PASTIKAN BLOK KODE INI ADA DAN LENGKAP ---
@@ -117,7 +120,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickLis
     private void setupUI() {
         // 1. Inisialisasi setiap adapter
         // HomeHeaderAdapter sekarang akan meng-handle setup listener-nya sendiri
-        headerAdapter = new HomeHeaderAdapter(this, this::setupSearchListener, this::setupCarousel);
+        headerAdapter = new HomeHeaderAdapter(this, this::setupCarousel);
         homeAdapter = new HomeAdapter(this);
 
         // 2. Gabungkan keduanya dengan ConcatAdapter
@@ -134,14 +137,17 @@ public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickLis
             }
         });
 
+
         // 4. Set layout manager dan adapter penggabung ke RecyclerView utama
         binding.recyclerViewHome.setLayoutManager(layoutManager);
         binding.recyclerViewHome.setAdapter(concatAdapter);
+
     }
 
     // Method ini akan dipanggil dari dalam Header Adapter
-    private void setupSearchListener(TextInputEditText editText) {
-        editText.addTextChangedListener(new TextWatcher() {
+    private void setupSearchListener() {
+
+        binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
@@ -276,7 +282,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.OnItemClickLis
     public void onCategoryClick(Category category) {
         this.selectedCategory = category;
         headerAdapter.updateSelectedCategory(category.getId());
-        String currentQuery = headerAdapter.getCurrentSearchQuery(); // Ambil query terakhir dari header
+        // Ambil query langsung dari binding
+        String currentQuery = binding.etSearch.getText().toString();
         filterMenuItems(currentQuery);
     }
 

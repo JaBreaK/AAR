@@ -21,7 +21,7 @@ public class HomeHeaderAdapter extends RecyclerView.Adapter<HomeHeaderAdapter.Vi
     private final CategoryAdapter.OnCategoryClickListener categoryListener;
 
     // --- BARU: Interface callback untuk setup ---
-    private final Consumer<TextInputEditText> searchListenerSetup;
+
     private final Consumer<ViewPager2> carouselListenerSetup;
 
     private CategoryAdapter categoryAdapter;
@@ -34,10 +34,9 @@ public class HomeHeaderAdapter extends RecyclerView.Adapter<HomeHeaderAdapter.Vi
     // --- BARU: Konstruktor yang benar ---
     public HomeHeaderAdapter(
             CategoryAdapter.OnCategoryClickListener categoryListener,
-            Consumer<TextInputEditText> searchListenerSetup,
+            // Hapus parameter searchListenerSetup dari konstruktor
             Consumer<ViewPager2> carouselListenerSetup) {
         this.categoryListener = categoryListener;
-        this.searchListenerSetup = searchListenerSetup;
         this.carouselListenerSetup = carouselListenerSetup;
     }
 
@@ -59,12 +58,7 @@ public class HomeHeaderAdapter extends RecyclerView.Adapter<HomeHeaderAdapter.Vi
     }
 
     // --- BARU: Method untuk mendapatkan query pencarian ---
-    public String getCurrentSearchQuery() {
-        if (holder != null && holder.binding.etSearch != null) {
-            return holder.binding.etSearch.getText().toString();
-        }
-        return "";
-    }
+
 
     @NonNull
     @Override
@@ -72,7 +66,7 @@ public class HomeHeaderAdapter extends RecyclerView.Adapter<HomeHeaderAdapter.Vi
         LayoutHomeHeaderBinding binding = LayoutHomeHeaderBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false
         );
-        return new ViewHolder(binding, categoryListener, searchListenerSetup, carouselListenerSetup);
+        return new ViewHolder(binding, categoryListener,  carouselListenerSetup);
     }
 
     @Override
@@ -98,7 +92,6 @@ public class HomeHeaderAdapter extends RecyclerView.Adapter<HomeHeaderAdapter.Vi
         public ViewHolder(
                 LayoutHomeHeaderBinding binding,
                 CategoryAdapter.OnCategoryClickListener categoryListener,
-                Consumer<TextInputEditText> searchListenerSetup,
                 Consumer<ViewPager2> carouselListenerSetup) {
             super(binding.getRoot());
             this.binding = binding;
@@ -109,7 +102,6 @@ public class HomeHeaderAdapter extends RecyclerView.Adapter<HomeHeaderAdapter.Vi
             binding.recyclerViewCategories.setAdapter(this.categoryAdapter);
 
             // Panggil callback untuk setup search dan carousel di Fragment
-            searchListenerSetup.accept(binding.etSearch);
             carouselListenerSetup.accept(binding.viewPagerCarousel);
         }
 
