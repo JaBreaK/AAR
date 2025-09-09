@@ -80,7 +80,7 @@ public class CheckoutFragment extends Fragment {
 
     private void fetchPaymentMethods() {
         binding.progressBarPayment.setVisibility(View.VISIBLE);
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
         apiService.getPaymentMethods().enqueue(new Callback<List<PaymentMethod>>() {
             @Override
             public void onResponse(Call<List<PaymentMethod>> call, Response<List<PaymentMethod>> response) {
@@ -158,7 +158,7 @@ public class CheckoutFragment extends Fragment {
         );
 
         // HANYA ADA SATU PANGGILAN API DI SINI
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
         apiService.createOrder(payload).enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {

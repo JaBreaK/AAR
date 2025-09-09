@@ -2,20 +2,16 @@ package com.ayamgorengsuharti;
 
 import android.os.Bundle;
 import android.view.View;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.ayamgorengsuharti.databinding.ActivityMainBinding;
 import com.ayamgorengsuharti.model.CartItem;
 import com.ayamgorengsuharti.viewmodel.CartViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.ayamgorengsuharti.ui.cart.CartSheetFragment;
-
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
@@ -24,135 +20,96 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private NavController navController;
-    private AppBarConfiguration appBarConfiguration;
     private CartViewModel cartViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // --- BARU: Inisialisasi CartViewModel ---
-        // ViewModelProvider akan memastikan kita dapat ViewModel yang sama di seluruh activity
+        // 1. Inisialisasi ViewModel di awal
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
 
-        // --- Kode Navigasi Bawah (TETAP ADA) ---
-        BottomNavigationView navView = binding.navView;
+        // 2. Setup Navigasi
+        setupNavigation();
 
-        appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home,  R.id.navigation_transaksi)
+        // 3. Setup Listener (Hanya Sekali)
+        binding.cartCapsuleBar.setOnClickListener(v ->
+                navController.navigate(R.id.action_global_cartSheetFragment)
+        );
+
+        // 4. Panggil Observer (Hanya Sekali)
+        observeCart();
+    }
+
+    private void setupNavigation() {
+        BottomNavigationView navView = binding.navView;
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_transaksi)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+        // Listener untuk pindah halaman
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            // Cek apakah halaman saat ini adalah salah satu dari tab utama
             boolean isMainDestination = destination.getId() == R.id.navigation_home ||
                     destination.getId() == R.id.navigation_transaksi;
 
+            // Atur visibilitas BottomNavigationView
+            binding.navView.setVisibility(isMainDestination ? View.VISIBLE : View.GONE);
 
-            if (isMainDestination) {
-                // Jika di halaman utama, TAMPILKAN menu bawah
-                binding.navView.setVisibility(View.VISIBLE);
-
-                // --- BAGIAN BARU ---
-                // Cek juga kondisi keranjang untuk menampilkan/menyembunyikan kapsul
-                Map<Integer, CartItem> currentCart = cartViewModel.getCartItems().getValue();
-                if (currentCart != null && !currentCart.isEmpty()) {
-                    binding.cartCapsuleBar.setVisibility(View.VISIBLE);
-                } else {
-
-                    binding.cartCapsuleBar.setVisibility(View.GONE);
-                    cartViewModel.setCartCapsuleVisible(false);
-                }
-                // --- AKHIR BAGIAN BARU ---
-
+            // Panggil ulang observeCart untuk re-evaluasi visibilitas kapsul
+            // Ini akan memastikan status kapsul benar saat kembali ke halaman utama
+            if(isMainDestination) {
+                updateCartCapsuleVisibility();
             } else {
-                // Jika BUKAN di halaman utama (misal: Checkout, Detail Produk, dll)
-                // SEMBUNYIKAN menu bawah DAN kapsul keranjang
-                binding.navView.setVisibility(View.GONE);
-                binding.cartCapsuleBar.setVisibility(View.GONE); // <-- TAMBAHKAN INI
+                // Sembunyikan kapsul jika bukan di halaman utama
+                binding.cartCapsuleBar.setVisibility(View.GONE);
+                cartViewModel.setCartCapsuleVisible(false);
             }
         });
-
-        // --- Kode Warna Ikon Navigasi (TETAP ADA) ---
-        int[][] states = new int[][]{
-                new int[]{android.R.attr.state_checked},
-                new int[]{-android.R.attr.state_checked}
-        };
-
-        int[] colors = new int[]{
-                getResources().getColor(R.color.bottom_nav_item_selected, getTheme()),
-                getResources().getColor(R.color.bottom_nav_item_unselected, getTheme())
-        };
-
-        android.content.res.ColorStateList myColorStateList = new android.content.res.ColorStateList(states, colors);
-
-        binding.navView.setItemIconTintList(myColorStateList);
-        binding.navView.setItemTextColor(myColorStateList);
-        // --- AKHIR DARI KODE WARNA ---
-
-        // --- BARU: Panggil method untuk mengamati perubahan keranjang ---
-        observeCart();
-
-        binding.cartCapsuleBar.setOnClickListener(v -> {
-            CartSheetFragment cartSheet = new CartSheetFragment();
-            cartSheet.show(getSupportFragmentManager(), cartSheet.getTag());
-        });
-
-        observeCart();
-
-        // --- BARU: Tambahkan listener untuk seluruh kapsul ---
-        binding.cartCapsuleBar.setOnClickListener(v -> showCartSheet());
-
-        // --- BARU: Tambahkan juga listener untuk tombol checkout di dalam kapsul ---
-        binding.btnCheckout.setOnClickListener(v -> showCartSheet());
     }
 
-    private void showCartSheet() {
-        CartSheetFragment cartSheet = new CartSheetFragment();
-        cartSheet.show(getSupportFragmentManager(), cartSheet.getTag());
-    }
-
-    /**
-     * --- METHOD BARU ---
-     * Method ini "mendengarkan" setiap perubahan data di dalam CartViewModel.
-     * Jika ada item ditambah/dikurangi, kode di dalam observer ini akan otomatis berjalan.
-     */
     private void observeCart() {
         cartViewModel.getCartItems().observe(this, cartItems -> {
-            boolean isCartEmpty = cartItems == null || cartItems.isEmpty();
-            // --- UPDATE DI SINI ---
-            if (isCartEmpty) {
-                binding.cartCapsuleBar.setVisibility(View.GONE);
-                cartViewModel.setCartCapsuleVisible(false); // Kirim sinyal: kapsul hilang
-            } else {
-                // Jika ada isinya, tampilkan kapsul dan hitung total
-                binding.cartCapsuleBar.setVisibility(View.VISIBLE);
-                cartViewModel.setCartCapsuleVisible(true);
-
+            // Update teks dan harga di kapsul
+            if (cartItems != null && !cartItems.isEmpty()) {
                 int totalItems = 0;
                 double totalPrice = 0;
                 for (CartItem item : cartItems.values()) {
                     totalItems += item.getQuantity();
                     totalPrice += item.getProduct().getHarga() * item.getQuantity();
                 }
-
-                // Update teks pada tombol checkout
                 binding.btnCheckout.setText("Check Out (" + totalItems + ")");
-
-                // Format harga ke Rupiah dan update teks total harga
                 Locale localeID = new Locale("in", "ID");
                 NumberFormat format = NumberFormat.getCurrencyInstance(localeID);
                 format.setMaximumFractionDigits(0);
                 binding.tvCartTotalPrice.setText(format.format(totalPrice));
             }
+
+            // Update visibilitas kapsul
+            updateCartCapsuleVisibility();
         });
     }
 
+    // METHOD BARU: Untuk sentralisasi logika menampilkan/menyembunyikan kapsul
+    private void updateCartCapsuleVisibility() {
+        if (navController.getCurrentDestination() == null) return;
+
+        boolean isMainDestination = navController.getCurrentDestination().getId() == R.id.navigation_home ||
+                navController.getCurrentDestination().getId() == R.id.navigation_transaksi;
+
+        Map<Integer, CartItem> cart = cartViewModel.getCartItems().getValue();
+        boolean isCartEmpty = cart == null || cart.isEmpty();
+
+        // Kapsul hanya muncul jika: di halaman utama DAN keranjang tidak kosong
+        if (isMainDestination && !isCartEmpty) {
+            binding.cartCapsuleBar.setVisibility(View.VISIBLE);
+            cartViewModel.setCartCapsuleVisible(true);
+        } else {
+            binding.cartCapsuleBar.setVisibility(View.GONE);
+            cartViewModel.setCartCapsuleVisible(false);
+        }
+    }
 }

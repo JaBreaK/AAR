@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider; // Import baru
 
+import com.ayamgorengsuharti.R;
 import com.ayamgorengsuharti.databinding.FragmentProductDetailBinding;
 import com.ayamgorengsuharti.model.CartItem; // Import baru
 import com.ayamgorengsuharti.model.MenuItemResponse;
@@ -20,6 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map; // Import baru
+import com.google.gson.Gson;
 
 public class ProductDetailFragment extends BottomSheetDialogFragment {
 
@@ -40,10 +42,19 @@ public class ProductDetailFragment extends BottomSheetDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(STYLE_NORMAL, R.style.Theme_App_BottomSheetDialog);
+
+        // --- GANTI CARA MENGAMBIL DATA ---
         if (getArguments() != null) {
-            menuItem = getArguments().getParcelable("PRODUCT_ITEM");
+            // 1. Ambil teks JSON dari argument
+            String productJson = getArguments().getString("product_item");
+
+            // 2. Buat instance Gson
+            Gson gson = new Gson();
+            // 3. Ubah kembali teks JSON menjadi objek MenuItemResponse
+            menuItem = gson.fromJson(productJson, MenuItemResponse.class);
         }
-        // --- BARU: Inisialisasi ViewModel ---
+
         cartViewModel = new ViewModelProvider(requireActivity()).get(CartViewModel.class);
     }
 

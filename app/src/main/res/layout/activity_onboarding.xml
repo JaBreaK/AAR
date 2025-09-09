@@ -54,8 +54,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lanjut"
+            android:textColor="@color/white"
             app:backgroundTint="@color/orange_primary"
             app:icon="@drawable/baseline_arrow_forward_24"
+
+            app:cornerRadius="28dp"
             app:iconGravity="end"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

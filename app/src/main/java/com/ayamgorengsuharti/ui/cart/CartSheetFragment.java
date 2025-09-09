@@ -1,9 +1,12 @@
 package com.ayamgorengsuharti.ui.cart;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,6 +18,7 @@ import com.ayamgorengsuharti.adapter.CartSheetAdapter;
 import com.ayamgorengsuharti.databinding.FragmentCartSheetBinding;
 import com.ayamgorengsuharti.model.CartItem;
 import com.ayamgorengsuharti.viewmodel.CartViewModel;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.text.NumberFormat;
@@ -26,6 +30,14 @@ public class CartSheetFragment extends BottomSheetDialogFragment implements Cart
     private FragmentCartSheetBinding binding;
     private CartViewModel cartViewModel;
     private CartSheetAdapter adapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // --- TAMBAHKAN BARIS INI UNTUK MENERAPKAN STYLE ---
+        setStyle(STYLE_NORMAL, R.style.Theme_App_BottomSheetDialog);
+    }
 
     @Nullable
     @Override
@@ -91,6 +103,23 @@ public class CartSheetFragment extends BottomSheetDialogFragment implements Cart
         // Hapus semua kuantitas item ini
         for (int i = 0; i < item.getQuantity(); i++) {
             cartViewModel.removeItem(item.getProduct());
+        }
+    }
+    // --- TAMBAHKAN METHOD BARU INI ---
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Dapatkan dialog dari fragment ini
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            // Dapatkan view dari bottom sheet
+            FrameLayout bottomSheet = (FrameLayout) dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                // Atur perilakunya agar langsung EXPANDED (terbuka penuh)
+                BottomSheetBehavior<FrameLayout> behavior = BottomSheetBehavior.from(bottomSheet);
+                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
         }
     }
 }

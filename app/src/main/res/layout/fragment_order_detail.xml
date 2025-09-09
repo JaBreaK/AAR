@@ -219,6 +219,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/orange_primary"
+                    app:cornerRadius="28dp"
                     android:text="Choose File"
                     android:textAllCaps="false"/>
 
@@ -234,6 +235,7 @@
                     android:id="@+id/btn_confirm_payment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:cornerRadius="28dp"
                     android:textColor="@color/white"
                     android:layout_marginTop="16dp"
                     app:backgroundTint="@color/orange_primary"

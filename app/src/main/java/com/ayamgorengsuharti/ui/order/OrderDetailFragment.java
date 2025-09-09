@@ -200,7 +200,7 @@ public class OrderDetailFragment extends Fragment {
         if (!binding.swipeRefreshLayout.isRefreshing()) {
             binding.progressBarDetail.setVisibility(View.VISIBLE);
         }
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
         apiService.getOrderDetail(id, wa).enqueue(new Callback<Order>() {
             @Override
             public void onResponse(Call<Order> call, Response<Order> response) {
@@ -422,7 +422,7 @@ public class OrderDetailFragment extends Fragment {
             MultipartBody.Part body = MultipartBody.Part.createFormData("bukti", getFileName(selectedImageUri), requestFile);
 
             // Panggil API
-            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
             apiService.uploadPaymentProof(orderId, body).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {

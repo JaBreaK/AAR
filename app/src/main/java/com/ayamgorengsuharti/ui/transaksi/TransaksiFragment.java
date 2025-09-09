@@ -78,7 +78,7 @@ public class TransaksiFragment extends Fragment implements TransaksiAdapter.OnOr
         }
         binding.tvEmptyState.setVisibility(View.GONE);
 
-        ApiClient.getClient().create(ApiService.class).getOrdersByWa(nomorWa).enqueue(new Callback<List<Order>>() {
+        ApiClient.getClient(requireContext()).create(ApiService.class).getOrdersByWa(nomorWa).enqueue(new Callback<List<Order>>() {
             @Override
             public void onResponse(@NonNull Call<List<Order>> call, @NonNull Response<List<Order>> response) {
                 binding.progressBar.setVisibility(View.GONE);

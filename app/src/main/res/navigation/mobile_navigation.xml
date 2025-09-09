@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_home_to_product_detail"
-            app:destination="@id/productDetailFragment" />
+            app:destination="@id/productDetailFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/stay_in_place"
+            app:popEnterAnim="@anim/stay_in_place"
+            app:popExitAnim="@anim/slide_out_down" />
     </fragment>
 
 
@@ -31,19 +35,35 @@
         android:id="@+id/productDetailFragment"
         android:name="com.ayamgorengsuharti.ui.product.ProductDetailFragment"
         android:label="ProductDetailFragment"
-        tools:layout="@layout/fragment_product_detail"/>
+        tools:layout="@layout/fragment_product_detail">
+
+        <!-- UBAH TIPE ARGUMENT DI SINI -->
+        <argument
+            android:name="product_item"
+            app:argType="string" />
+
+    </dialog>
 
     <dialog
         android:id="@+id/cartSheetFragment"
         android:name="com.ayamgorengsuharti.ui.cart.CartSheetFragment"
         android:label="CartSheetFragment"
         tools:layout="@layout/fragment_cart_sheet">
-
+        <action
+            android:id="@+id/action_cartSheetFragment_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
     </dialog>
 
     <action
         android:id="@+id/action_global_checkoutFragment"
         app:destination="@id/checkoutFragment" />
+    <action
+        android:id="@+id/action_global_cartSheetFragment"
+        app:destination="@id/cartSheetFragment"
+        app:enterAnim="@anim/slide_in_up"
+        app:exitAnim="@anim/stay_in_place"
+        app:popEnterAnim="@anim/stay_in_place"
+        app:popExitAnim="@anim/slide_out_down" />
 
     <fragment
         android:id="@+id/checkoutFragment"

@@ -25,6 +25,10 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:boxCornerRadiusBottomEnd="28dp"
+                app:boxCornerRadiusBottomStart="28dp"
+                app:boxCornerRadiusTopEnd="28dp"
+                app:boxCornerRadiusTopStart="28dp"
                 android:layout_marginTop="16dp"
                 android:hint="Nama Lengkap">
                 <com.google.android.material.textfield.TextInputEditText
@@ -38,6 +42,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                app:boxCornerRadiusBottomEnd="28dp"
+                app:boxCornerRadiusBottomStart="28dp"
+                app:boxCornerRadiusTopEnd="28dp"
+                app:boxCornerRadiusTopStart="28dp"
                 android:hint="Nomor WhatsApp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_customer_whatsapp"
@@ -51,6 +59,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                app:boxCornerRadiusBottomEnd="28dp"
+                app:boxCornerRadiusBottomStart="28dp"
+                app:boxCornerRadiusTopEnd="28dp"
+                app:boxCornerRadiusTopStart="28dp"
                 android:hint="Catatan (Opsional)">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_customer_notes"
@@ -105,6 +117,7 @@
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
         android:padding="14dp"
+        app:cornerRadius="28dp"
         app:backgroundTint="@color/orange_primary"
         android:textColor="@color/white"
         android:text="Order Sekarang" />

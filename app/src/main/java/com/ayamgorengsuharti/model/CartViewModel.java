@@ -12,7 +12,9 @@ public class CartViewModel extends ViewModel {
 
     // Map<Integer, CartItem> -> Key: ID Produk, Value: Objek CartItem
     private final MutableLiveData<Map<Integer, CartItem>> cartItems = new MutableLiveData<>();
+    // --- BARU: LiveData untuk status visibilitas kapsul ---
     private final MutableLiveData<Boolean> isCartCapsuleVisible = new MutableLiveData<>(false);
+
 
     public CartViewModel() {
         cartItems.setValue(new HashMap<>());
@@ -21,6 +23,8 @@ public class CartViewModel extends ViewModel {
     public LiveData<Map<Integer, CartItem>> getCartItems() {
         return cartItems;
     }
+
+
 
     public void addItem(MenuItemResponse product) {
         Map<Integer, CartItem> currentCart = cartItems.getValue();
